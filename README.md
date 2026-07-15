@@ -27,12 +27,12 @@ git clone <repo-url> ~/.config/opencode/skills/
 
 | 技能 | 描述 |
 |------|------|
-| `xy-feat` | 端到端功能开发工作流（brainstorming → writing-plans → TDD → verification → review），串联 superpowers 技能链，自包含、跨项目复用 |
-| `unicv` | 基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序脚手架生成器 |
+| `xy-feat` | 端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证 → 审查收尾），优先调用 superpowers，未安装时降级为内联流程 |
+| `docs-layout-quadrant` | 文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录，支持批量整理历史文档（去日期前缀、冲突仲裁、建立知识索引） |
 | `self-check-trinity` | 强制在交付代码前执行 lint → typecheck → test 三道质量检查 |
+| `unicv` | 基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序脚手架生成器 |
 | `unified-api-response` | 强制所有 JSON API 返回统一的 `{ code, message, data }` 响应结构 |
 | `api-name-drift-defense` | 防御第三方库版本升级导致的 API 重命名/移除问题 |
-| `docs-layout-quadrant` | 强制文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录 |
 | `health-probe-discipline` | Node 服务探针端点（health/readiness/liveness）规范约束 |
 | `z-paging-best-practices` | z-paging 分页组件的最佳实践指南，包含下拉刷新、上滑加载及布局防踩坑指南 |
 

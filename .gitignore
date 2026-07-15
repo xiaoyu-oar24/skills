@@ -1,0 +1,10 @@
+dist
+.idea
+.vscode
+.memsearch
+.superpowers
+.DS_Store
+CLAUDE.md
+pack.sh
+docs
+superpowers-main/

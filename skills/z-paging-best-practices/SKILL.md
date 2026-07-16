@@ -7,6 +7,8 @@ author: xiaoyu
 
 # z-paging 最佳实践
 
+> **生命周期阶段**：稳定
+
 本指南假设目标 uni-app 项目已通过 `uni_modules` 引入 z-paging (v2.8.6)，典型路径为 `src/uni_modules/z-paging/`（实际路径以项目为准）。
 
 ## 🎯 触发条件
@@ -18,11 +20,11 @@ author: xiaoyu
   - 将旧版手动计算高度的 z-paging 页面迁移到 fixed 模式时
 - **SKIP**: 非 uni-app 项目，或页面不涉及分页列表
 
-## ⚙️ 依赖环境
+## ⚙️ 依赖与先决条件
 
-- uni-app 项目（微信小程序 / H5）
-- `z-paging` v2.8.6（路径：`src/uni_modules/z-paging/`）
-- `uv-ui` 组件库（用于 `uv-navbar` 等 UI 组件）
+- uni-app 项目（微信小程序 / H5）。可通过检查项目根目录下是否存在 `manifest.json` 文件（`ls manifest.json`）来确认。
+- `z-paging` v2.8.6。可通过运行 `ls src/uni_modules/` 并查找 `z-paging` 目录，或检查锁文件依赖确认。
+- `uv-ui` 组件库（用于 `uv-navbar` 等 UI 组件）。可通过运行 `ls src/uni_modules/` 并查找 `uv-ui` 确认。
 
 ## 📌 核心概念
 
@@ -30,11 +32,22 @@ z-paging 维护内部 scroll-view，通过 `@query` 回调自动计算 `pageNo` 
 
 组件默认开启 `fixed` 模式，`position: fixed; top: 0; bottom: 0` 铺满屏幕，内部使用 flex 纵向布局。
 
-## 📖 核心工作流
+## 📖 标准工作流
 
-### 阶段 1：采用推荐方案 — fixed 模式 + slot="top"/"bottom"
+### 阶段 1：诊断 — 读取页面结构，确认分页场景
 
-这是 z-paging 源码设计的原生用法，代码最简洁，无手动高度计算。
+**使用工具**：`Read`
+
+使用 Read 工具读取目标页面文件，理解现有布局结构，确认是否满足分页列表场景。关注以下关键点：
+- 当前是否已使用 z-paging，是否在 fixed 模式
+- 导航栏和底部按钮的定位方式
+- 是否存在手动高度计算、`paging-style` 等反模式代码
+
+### 阶段 2：执行 — 采用 fixed 模式 + slot 插槽布局
+
+**使用工具**：`Edit`
+
+这是 z-paging 源码设计的原生用法，代码最简洁，无手动高度计算。使用 Edit 工具编写或重构布局，确保以下结构：
 
 **模板结构**:
 
@@ -120,7 +133,7 @@ function reloadList() {
 }
 ```
 
-### 阶段 2：理解布局原理
+### 阶段 3：理解 — 布局原理
 
 z-paging `fixed` 模式 CSS 类 `.z-paging-content-fixed`：`position: fixed; top: 0; left: 0; bottom: 0; right: 0;`，内部 flex 纵向布局：
 
@@ -143,7 +156,7 @@ z-paging `fixed` 模式 CSS 类 `.z-paging-content-fixed`：`position: fixed; to
 
 **关键**：`slot="top"` / `slot="bottom"` 内的元素会作为 flex 子项参与布局，自动占据空间，scroll-view 的 `flex: 1` 填充剩余区域。无需任何手动高度计算。
 
-## ⛔ 行为限制与护栏
+## ⛔ 行为护栏
 
 - **禁止在 `slot="top"` 中使用 `position: fixed`** — z-paging 文档明确要求，会导致布局错乱
 - **禁止在 `slot="bottom"` 中使用 `position: fixed`** — 同上
@@ -154,15 +167,13 @@ z-paging `fixed` 模式 CSS 类 `.z-paging-content-fixed`：`position: fixed; to
 
 ## 📝 模板与范例
 
-### <Bad> 旧方案（手动计算高度，代码冗余）
-
-项目中部分既有页面仍使用此方案，仅在与既有页面保持风格一致时参考，**新建页面严禁使用**。
+### <Bad>
 
 ```vue
+<!-- 错误：手动计算高度，代码冗余 -->
 <template>
   <view>
     <uv-navbar :fixed="true" leftText="返回" title="标题" />
-    <!-- 手动 spacer -->
     <view :style="`height:${navBarHeight}px;`" />
 
     <z-paging
@@ -175,29 +186,15 @@ z-paging `fixed` 模式 CSS 类 `.z-paging-content-fixed`：`position: fixed; to
       <view class="list-content">...</view>
     </z-paging>
 
-    <!-- 底部按钮在外层，fixed 定位 -->
     <view class="footer-btn" style="position: fixed; bottom: 0">...</view>
   </view>
 </template>
-
-<script setup>
-import { onShow } from '@dcloudio/uni-app'
-
-const navBarHeight = ref(0)
-const styleZPage = computed(() => ({
-  paddingTop: navBarHeight.value + 'px'
-}))
-
-onShow(() => {
-  const res = uni.getSystemInfoSync()
-  navBarHeight.value = 44 + res.statusBarHeight
-})
-</script>
 ```
 
-### <Good> 推荐方案（fixed + slot 插槽）
+### <Good>
 
 ```vue
+<!-- 正确：fixed + slot 插槽 -->
 <template>
   <view class="page-container">
     <z-paging

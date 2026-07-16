@@ -7,6 +7,7 @@ author: xiaoyu
 
 # xy-feat 工作流
 
+> **生命周期阶段**：稳定
 > **定位**：将 **需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证完成 → 审查收尾** 串成一条端到端流水线。
 > **双模执行**：每个阶段**优先通过 `Skill` 工具调用 superpowers 对应技能**（充分利用其经过充分测试的完整流程）；若 superpowers 未安装（Skill 调用返回不可用），则自动降级为本文件内联的精简流程。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
@@ -16,35 +17,36 @@ author: xiaoyu
 - 仅在用户显式输入 `/xy-feat [需求]` 时触发。其他自然语言描述（如"开发一个新功能"、"写一个 xxx 特性"）**不触发**本工作流。
 - 由本工作流统一调度，**不允许跳过阶段**（除非用户明确授权）。
 
-## ⚙️ 依赖环境
+## ⚙️ 依赖与先决条件
 
-- **Bash 环境**：支持 `mkdir`、`date` 等基础命令。
+- **命令行工具环境**：支持 `mkdir`、`date` 以及常规脚本操作的 Unix-like 终端。可通过在终端运行 `date` 确认环境就绪。
+- **项目包管理器/测试运行器**：由 AI 运行时根据项目锁文件判定（如包含 `pnpm-lock.yaml` -> 使用 `pnpm`；包含 `Cargo.toml` -> 使用 `cargo`；包含 `pyproject.toml` -> 使用 `poetry`/`pytest`），无需预先假设。
 
 ### Superpowers 技能依赖（优先模式）
 
-> 以下技能为本工作流各阶段的**首选执行载体**。安装 superpowers 后，AI 将通过 `Skill` 工具优先调用它们以获得完整流程。未安装时自动降级为本文件内联的精简版本。
+> 以下技能为本工作流各阶段的**首选执行载体**。使用 `Skill` 工具调用它们以获得完整流程。未配置时自动降级为本文件内联的精简版本。
 
-| 技能 | 阶段 | 优先级 | 降级策略 |
+| 技能 | 阶段 | 优先级 | 降级策略 & 验证命令 |
 | :--- | :--- | :--- | :--- |
-| `brainstorming` | 阶段 1 | **强制** | 缺失时执行内联的 1.1-1.5 流程 |
-| `writing-plans` | 阶段 2 | 推荐 | 缺失时执行内联的 2.2-2.6 流程 |
-| `test-driven-development` | 阶段 3 | 推荐 | 缺失时执行内联的 3.2 TDD 循环 |
-| `dispatching-parallel-agents` | 阶段 3 | 可选 | 缺失时执行内联的 3.3.1 并行策略 |
-| `subagent-driven-development` | 阶段 3 | 可选 | 缺失时执行内联的 3.3.2 子代理策略 |
-| `systematic-debugging` | 阶段 3 | 推荐 | 缺失时执行内联的 3.5 四阶段调试 |
-| `verification-before-completion` | 阶段 4 | **强制** | 缺失时执行内联的 Iron Law + 证据原则 |
-| `requesting-code-review` | 阶段 6 | 推荐 | 缺失时执行内联的 6.1 审查流程 |
-| `finishing-a-development-branch` | 阶段 6 | 推荐 | 缺失时执行内联的 6.2 收尾流程 |
-| `using-git-worktrees` | 阶段 0 | 可选 | 缺失时执行内联的工作区隔离策略 |
+| `brainstorming` | 阶段 1 | **强制** | 执行内联的 1.1-1.5 流程。可通过 `Skill` 检查 `brainstorming` |
+| `writing-plans` | 阶段 2 | 推荐 | 执行内联的 2.2-2.6 流程。可通过 `Skill` 检查 `writing-plans` |
+| `test-driven-development` | 阶段 3 | 推荐 | 执行内联的 3.2 TDD 循环。可通过 `Skill` 检查。 |
+| `dispatching-parallel-agents` | 阶段 3 | 可选 | 执行内联的 3.3.1 并行。可通过 `Skill` 检查。 |
+| `subagent-driven-development` | 阶段 3 | 可选 | 执行内联的 3.3.2 子代理。可通过 `Skill` 检查。 |
+| `systematic-debugging` | 阶段 3 | 推荐 | 执行内联的 3.5 调试。可通过 `Skill` 检查。 |
+| `verification-before-completion` | 阶段 4 | **强制** | 执行内联校验。可通过 `Skill` 检查。 |
+| `requesting-code-review` | 阶段 6 | 推荐 | 执行内联的 6.1 审查。可通过 `Skill` 检查。 |
+| `finishing-a-development-branch` | 阶段 6 | 推荐 | 执行内联的 6.2 收尾。可通过 `Skill` 检查。 |
+| `using-git-worktrees` | 阶段 0 | 可选 | 执行内联隔离策略。可通过 `Skill` 检查。 |
 
 ### 本地技能依赖
 
-> 以下技能为本仓库自维护，不受 superpowers 安装状态影响。
+> 以下技能为本仓库自维护，不受外部安装状态影响。
 
-| 技能 | 阶段 | 角色 |
+| 技能 | 阶段 | 角色 & 验证命令 |
 | :--- | :--- | :--- |
-| `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test 三道质量闸门 |
-| `docs-layout-quadrant` | 阶段 5 | 文档命名校验、路径修复、索引更新、过期清理 |
+| `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test。可通过运行 `Skill` 校验。 |
+| `docs-layout-quadrant` | 阶段 5 | 文档合规整理。可通过运行 `Skill` 校验。 |
 
 - **工具授权**：用户调用本工作流即视为明确授权进行文件读写、目录创建。
 
@@ -64,7 +66,7 @@ author: xiaoyu
 - 同一功能的四象限文档共享相同的 `<功能名>` 前缀。
 - **活文档策略**：若同名文档已存在，优先**原地更新**（文档随代码演进）。若必须保留旧版，将旧版追加 `-archived` 后缀后移入对应 `.archive/` 子目录，保持主文件名不变。
 
-## 📖 核心工作流
+## 📖 标准工作流
 
 > **总览**：`阶段 0 初始化` → `阶段 1 方案设计` → `阶段 2 规划分解` → `阶段 3 TDD 执行` → `阶段 4 验证完成` → `阶段 5 产出指南` → `阶段 6 审查收尾`
 
@@ -491,10 +493,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 #### 6.2 收尾
 
 1. **验证测试**（阶段 6 仍须重新确认）：
-   ```bash
-   npm test / cargo test / pytest / go test ./...
-   ```
-   测试未通过则停止，不允许进入收尾选项
+   根据项目锁文件判定最适合的测试指令（如 `npm test`、`cargo test`、`pytest` 或 `go test ./...`），通过 Bash 执行。测试未通过则停止，不允许进入收尾选项。
 
 2. **检测环境**：
    ```bash
@@ -541,54 +540,44 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 ---
 
-## ⛔ 行为限制与护栏
+## ⛔ 行为护栏
 
 - **🚫 禁止日期前缀**：所有产出文档必须使用领域主体命名（`<功能名>-design.md`），**禁止** `YYYY-MM-DD-<功能名>-design.md` 格式。文档是知识图谱，不是流水账。
 - **阶段不可跳跃**：默认必须按 0→1→2→3→4→5→6 顺序执行。若用户要求跳过某阶段，需明确告知风险并获得确认后方可跳过。
-- **活文档策略**：同名文档已存在时，默认原地更新而非新建。若需保留旧版，使用 `<功能名>-archived.md` 移入 `.archive/`，**禁止**自动追加 `-v2`/`-v3` 后缀。
+- **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入对应 `.archive/`，**禁止**自动追加 `-v2`/`-v3` 后缀。同时，禁止在 guardrails 列表堆叠超过 8 条规则以防止 AI 注意力衰减。
 - **Git 严格禁用**：默认情况下禁止 `git add`/`git commit`/`git push`/`git reset`/`git checkout --` 等命令。即使用户授权提交，也只能提交一次且需最终确认。
 - **上下文对齐**：每进入新阶段或切换任务卡片时，必须先 `Read` 上游产出文档。
-- **证据优先**：阶段 4 的验证必须有命令输出为凭，阶段 6 的审查必须有 diff 分析为凭，禁止空口断言。
-- **调试纪律**：阶段 3 遇到 Bug 必须先走根因调查（Phase 1-3），禁止猜测式修复。3 次不同假设均失败则汇报用户。
+- **证据优先**：阶段 4 的验证必须有命令输出为凭，阶段 6 的审查必须有 diff 结果为凭，禁止空口断言。
+- **调试纪律**：阶段 3 遇到 Bug 必须先走根因调查，禁止猜测式修复。3 次不同假设均失败则汇报用户。
 - **测试铁律**：禁止在编写失败测试之前编写任何实现代码。违反此规则——删代码，重来。
-- **降级不降质**：superpowers 不可用时的内联流程是最低标准，不可再删减。内联流程已包含各阶段的核心 guardrail 和 Iron Law。
 
 ## 📝 模板与范例
 
-### <Bad> 不规范的操作行为
+### <Bad>
 
-- 跳过方案设计直接写代码，导致需求理解偏差。
-- 编码时不查看 plan 文件，凭记忆实现。
-- 测试失败后猜测式修复，不追溯根因。
-- 验证阶段只口头声称"已通过"，未提供 lint/test 命令输出。
-- 未经用户允许执行 `git commit` 或 `git push`。
-- **使用日期前缀命名文档**（`2026-07-15-上传功能-design.md`），让文档变成一次性产物。
-- **同名文档冲突时自动追加 `-v2` 后缀**，制造多版本歧义。
+- 编码前不先写失败的测试，直接编写实现代码。
+- 验证阶段只口头声称"已通过"，未在当前消息中提供真实的测试与代码质量校验命令输出。
+- 使用日期前缀命名文档（`2026-07-15-上传功能-design.md`），或者同名文档冲突时自动追加 `-v2` 后缀制造多版本歧义。
+- 没有通过项目锁文件检测包管理器，直接硬编码 `npm test`，导致在 Python/Rust/Go 项目中运行失败。
 
-### <Good> 规范的文档产出
+### <Good>
 
 ```markdown
 # 领域主体命名 + 四象限（活文档）
-
 docs/specs/file-upload-design.md      ← 原地更新，随代码演进的长周期文档
 docs/plan/file-upload-plan.md         ← 交付后标记 [DONE]
 docs/tracking/file-upload.md          ← 验收后归档/删除
 docs/guide/file-upload-guide.md       ← 面向开发者的 How-to
-
-# 若需保留旧版
-docs/specs/.archive/file-upload-design-archived.md  ← 旧版归档
 ```
 
-### <Good> 标准追踪文件格式
-
 ```markdown
+# 标准追踪文件格式
 # 状态总览
 创建日期：2026-07-15 | 当前阶段：阶段 3 | 模式：TDD
 
 # 任务卡片
-- ✅ [后端] 创建 API 路由（commits abc123..def456, 测试 5/5, review clean）
-- ✅ [后端] 文件存储与校验逻辑（commits def456..ghi789, 测试 8/8）
-- 🔄 [前端] 上传组件 UI（RED 已写，等待 GREEN 实现）
-- ⏳ [前端] 与 API 联调
-- ⏳ [集成] 端到端流程验证
+- ✅ [组件/模块] 创建 API 路由（commits abc123..def456, 测试 5/5, review clean）
+- ✅ [组件/模块] 文件存储与校验逻辑（commits def456..ghi789, 测试 8/8）
+- 🔄 [组件/模块] 上传组件 UI（RED 已写，等待 GREEN 实现）
+- ⏳ [组件/模块] 组件联调
 ```

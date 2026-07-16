@@ -41,9 +41,16 @@ git clone <repo-url> ~/.config/opencode/skills/
 ```
 skills/
 ├── docs/                          # 规范指南、设计文档（四象限：specs/plan/tracking/guide）
-│   ├── 自定义Skills规范指南.md    # Skills 开发规范
-│   ├── 任务边界自律守则.md        # AI Agent 行为约束
-│   └── superpowers.md             # Superpowers 技能速查
+│   ├── INDEX.md                   # 知识索引导航
+│   ├── guide/                     # 使用指南（长周期）
+│   │   ├── AI规则与技能统一编写规范.md
+│   │   ├── superpowers.md
+│   │   └── ...
+│   ├── specs/                     # 设计规范（长周期）
+│   │   ├── 任务边界自律守则.md
+│   │   └── ...
+│   ├── plan/                      # 执行计划（短周期）
+│   └── tracking/                  # 进度跟踪（超短周期）
 ├── skills/                        # 技能容器目录
 │   ├── xy-feat/                   # 功能开发工作流
 │   ├── unicv/                     # UniApp 脚手架
@@ -59,7 +66,7 @@ skills/
 
 ## 开发
 
-所有技能严格遵循 `docs/自定义Skills规范指南.md`，每个 `SKILL.md` 必须包含：
+所有技能严格遵循 `docs/guide/AI规则与技能统一编写规范.md`，每个 `SKILL.md` 必须包含：
 
 - **🎯 触发条件** — 何时激活
 - **⚙️ 依赖环境** — 所需工具

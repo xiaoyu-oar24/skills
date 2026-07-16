@@ -5,6 +5,8 @@ version: "1.1.0"
 author: xiaoyu
 ---
 
+> **生命周期阶段**：稳定
+
 ## 🎯 触发条件
 
 - **TRIGGER when**: 
@@ -14,19 +16,19 @@ author: xiaoyu
   - 升级依赖版本后，原有代码或测试标红，需排查破坏性变更
 - **SKIP**: 普通的独立业务逻辑 Bug 或显而易见的本地拼写/语法错误
 
-## ⚙️ 依赖环境
+## ⚙️ 依赖与先决条件
 
-不限定具体技术栈。不同生态系统中 API 漂移的表现形式各异，但排查思路一致：
+不限定具体技术栈。不同生态系统中 API 漂移的表现形式各异，但排查思路一致，可通过以下命令探测对应工具链环境：
 
-| 生态系统 | 包管理器 | 依赖目录 | 类型/声明文件 |
-|----------|----------|----------|---------------|
-| Node.js | npm / pnpm / yarn | `node_modules/` | `.d.ts` / `.d.mts` |
-| Python | pip / poetry / uv | `site-packages/` | `.pyi` |
-| Java | Maven / Gradle | `~/.m2/repository/` | `.jar`（源码 jar） |
-| Rust | Cargo | `target/` | 源码即类型 |
-| Go | go mod | `$GOPATH/pkg/mod/` | 源码即类型 |
+| 生态系统 | 包管理器 / 依赖目录 | 校验/诊断探测命令 |
+|----------|----------|---------------|
+| Node.js | npm / pnpm / yarn | `node -v` 且 `cat package.json` |
+| Python | pip / poetry / uv | `python --version` 且 `pip --version` |
+| Java | Maven / Gradle | `mvn -v` 或 `gradle -v` |
+| Rust | Cargo | `cargo --version` |
+| Go | go mod | `go version` |
 
-## 📖 核心工作流
+## 📖 标准工作流
 
 ### 阶段 0：识别项目类型与依赖位置
 
@@ -60,15 +62,16 @@ author: xiaoyu
 
 修复后调用 Skill 工具执行 `self-check-trinity`，确保代码通过 Lint、类型/编译检查、测试全部通过
 
-## ⛔ 行为限制与护栏
+## ⛔ 行为护栏
 
 - **实证优先原则**: 禁止在未查看依赖实际导出和文档的情况下凭记忆编写修复代码，避免次生破坏
 - **保持引用一致性**: 所有 API 调用必须通过显式导入，禁止依赖隐式的全局注入或 auto-import
 - **沉淀踩坑记录**: 确认第三方改名事件后，建议在当前项目或团队知识库中记录该变更，避免团队成员重复踩坑
+- **禁止盲目升级**: 排查 API 漂移时，禁止在执行根因调查之前直接执行 `npm update` / `pip install --upgrade` / `cargo update` 等升级命令。应优先修复调用点以适配当前版本，升级依赖版本需要用户明确确认
 
 ## 📝 模板与范例
 
-<Bad>
+### <Bad>
 
 ```ts
 // 错误：依赖了已被重命名或移除的旧 API
@@ -84,9 +87,7 @@ export default defineEventHandler(async (event) => {
 from sklearn.cross_validation import train_test_split  # 已移至 sklearn.model_selection
 ```
 
-</Bad>
-
-<Good>
+### <Good>
 
 ```ts
 // 正确：查明变更后的实际方法名并显式导入
@@ -113,5 +114,3 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     return http.build();
 }
 ```
-
-</Good>

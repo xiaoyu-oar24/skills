@@ -5,6 +5,7 @@ dist
 .superpowers
 .DS_Store
 CLAUDE.md
+AGENTS.md
 pack.sh
 docs
 superpowers-main/

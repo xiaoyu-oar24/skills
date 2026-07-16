@@ -1,6 +1,6 @@
 ---
 name: health-probe-discipline
-description: 强制执行服务 health/readiness/liveness 探针端点的规范约束。TRIGGER when: 新增或审查探针端点（/api/health、/api/live）、探针误报触发告警、发现探针端点被按 HTTP 动词拆分为多个文件。SKIP: 普通业务功能 API 接口。
+description: "强制执行服务 health/readiness/liveness 探针端点的规范约束。TRIGGER when: 新增或审查探针端点如 /api/health、/api/live、探针误报触发告警、发现探针端点被按 HTTP 动词拆分为多个文件。SKIP: 普通业务功能 API 接口。"
 version: "1.1.0"
 author: xiaoyu
 ---

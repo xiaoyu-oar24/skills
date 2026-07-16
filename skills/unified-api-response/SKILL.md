@@ -1,6 +1,6 @@
 ---
 name: unified-api-response
-description: 强制所有 JSON API Handler 返回统一的 `{ code, message, data }` 响应结构。TRIGGER when: 设计或审查 BFF / REST API、添加新的服务端路由处理器、发现已有 API 返回格式不一致、挂载全局错误兜底插件。SKIP: 流式响应或非 JSON 的 SSR HTML 路由。
+description: "强制所有 JSON API Handler 返回统一的 code-message-data 响应结构。TRIGGER when: 设计或审查 BFF / REST API、添加新的服务端路由处理器、发现已有 API 返回格式不一致、挂载全局错误兜底插件。SKIP: 流式响应或非 JSON 的 SSR HTML 路由。"
 version: "1.1.0"
 author: xiaoyu
 ---

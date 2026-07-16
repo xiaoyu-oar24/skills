@@ -1,6 +1,6 @@
 ---
 name: self-check-trinity
-description: 强制在交付任何代码变更前依次执行 lint → typecheck → test 三道质量检查。TRIGGER when: 完成功能开发、修复 Bug、准备提交或发起 PR、被要求"验证"/"自检"/"交付"/"收尾"。SKIP: 仅修改文档、注释或 README，不涉及运行时代码。
+description: "强制在交付任何代码变更前依次执行 lint、typecheck、test 三道质量检查。TRIGGER when: 完成功能开发、修复 Bug、准备提交或发起 PR、被要求验证/自检/交付/收尾。SKIP: 仅修改文档、注释或 README，不涉及运行时代码。"
 version: "1.0.1"
 author: xiaoyu
 ---

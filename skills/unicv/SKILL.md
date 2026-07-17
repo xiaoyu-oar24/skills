@@ -28,15 +28,15 @@ author: xiaoyu
 
 严格按照以下顺序及工具执行项目生成，不可跳过或自行臆造代码：
 
-1. **阶段 1：环境检查** —— 使用 LS 工具检查当前目录是否已有内容。若目录非空，使用 AskUserQuestion 工具向用户确认是否在当前目录下创建子目录。未得到确认前不允许动工。
-2. **阶段 2：读取参考库文件** —— 使用 Read 工具分批读取本技能目录下的参考文件，读取后立即写入：
-   - 读取 `references/package-json.md` → 使用 Write 工具生成项目中的 `package.json`。
-   - 读取 `references/project-structure.md` → 使用 Bash 执行 `mkdir -p` 建立所需的目录骨架。
-3. **阶段 3：注入核心配置与模板源码** —— 继续使用 Read + Write 工具推进：
-   - 读取 `references/core-configs.md` → 使用 Write 工具将配置文件写入对应磁盘路径：`vite.config.ts`、`tsconfig.json`、`.prettierrc`、各环境 `.env`、`src/main.ts`、`src/App.vue`、`src/config/index.ts`。
-   - 读取 `references/build-scripts.md` → 使用 Write 工具写入构建文件：`build.mjs`、`build.lib.mjs`。
-   - 读取 `references/code-templates.md` → 使用 Write 工具将页面模板、组件、Store、`src/utils/request.ts` 等写入 `src/` 目录。
-4. **阶段 4：安装依赖与验证** —— 支持包管理器中立判定，优先根据锁文件（如无则在此处默认使用 `pnpm`）通过 Bash 依次执行：
+1. **阶段 1：环境检查** —— 检查当前目录是否已有内容。若目录非空，向用户确认是否在当前目录下创建子目录。未得到确认前不允许动工。
+2. **阶段 2：读取参考库文件** —— 分批读取本技能目录下的参考文件，读取后立即写入：
+   - 读取 `references/package-json.md` → 生成项目中的 `package.json`。
+   - 读取 `references/project-structure.md` → 执行 `mkdir -p` 建立所需的目录骨架。
+3. **阶段 3：注入核心配置与模板源码** —— 继续读取 + 写入文件推进：
+   - 读取 `references/core-configs.md` → 将配置文件写入对应磁盘路径：`vite.config.ts`、`tsconfig.json`、`.prettierrc`、各环境 `.env`、`src/main.ts`、`src/App.vue`、`src/config/index.ts`。
+   - 读取 `references/build-scripts.md` → 写入构建文件：`build.mjs`、`build.lib.mjs`。
+   - 读取 `references/code-templates.md` → 将页面模板、组件、Store、`src/utils/request.ts` 等写入 `src/` 目录。
+4. **阶段 4：安装依赖与验证** —— 支持包管理器中立判定，优先根据锁文件（如无则在此处默认使用 `pnpm`）在命令行依次执行：
    - `[package-manager] install`（如 `pnpm install`）安装依赖。
    - `[package-manager] run format`（如 `pnpm format`）格式化代码。
    - 完成后告知用户项目搭建成功。

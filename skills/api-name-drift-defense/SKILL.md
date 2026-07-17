@@ -34,8 +34,8 @@ author: xiaoyu
 
 在执行排查前，先确定当前项目的技术栈和依赖存放位置：
 
-1. 使用 Glob 或 LS 查看项目根目录的构建配置文件（`package.json` / `pyproject.toml` / `pom.xml` / `Cargo.toml` / `go.mod`）
-2. 使用 Bash 查看对应依赖的已安装版本，例如：
+1. 查看项目根目录的构建配置文件（`package.json` / `pyproject.toml` / `pom.xml` / `Cargo.toml` / `go.mod`）
+2. 在命令行查看对应依赖的已安装版本，例如：
    - Node: `cat node_modules/<pkg>/package.json | grep '"version"'`
    - Python: `pip show <pkg> | grep Version`
    - Java: `mvn dependency:tree -Dincludes=<group>:<artifact>` 或查看 `pom.xml` 中的版本声明
@@ -47,7 +47,7 @@ author: xiaoyu
 
 绝不依赖记忆！必须通过实证手段确认真实的 API 名称：
 
-- **静态语言/有类型声明**: 用 Read 查看依赖的类型声明文件或源码，确认导出名称和签名
+- **静态语言/有类型声明**: 查看依赖的类型声明文件或源码，确认导出名称和签名
   - Node: `grep -r "export.*function\|export.*const" node_modules/<pkg>/` 或在 `.d.ts` 中搜索
   - Python: 使用 `python -c "import <pkg>; print(dir(<pkg>))"` 列出可用符号，或 `help(<pkg>.<func>)`
   - Go / Rust: 直接用 Read 查看依赖源码或文档
@@ -55,12 +55,12 @@ author: xiaoyu
 
 ### 阶段 2：修复代码
 
-1. 确认变更后的实际 API 名称和签名后，使用 Edit 工具修正所有调用点
+1. 确认变更后的实际 API 名称和签名后，修正所有调用点
 2. 如果原先依赖了 auto-import 或隐式全局注入，改为显式导入语句，确保可追溯
 
 ### 阶段 3：回归验证
 
-修复后调用 Skill 工具执行 `self-check-trinity`，确保代码通过 Lint、类型/编译检查、测试全部通过
+修复后通过技能调用执行 `self-check-trinity`，确保代码通过 Lint、类型/编译检查、测试全部通过
 
 ## ⛔ 行为护栏
 

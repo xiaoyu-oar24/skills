@@ -9,7 +9,7 @@ author: xiaoyu
 
 > **生命周期阶段**：稳定
 > **定位**：将 **需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证完成 → 审查收尾** 串成一条端到端流水线。
-> **双模执行**：每个阶段**优先通过 `Skill` 工具调用 superpowers 对应技能**（充分利用其经过充分测试的完整流程）；若 superpowers 未安装（Skill 调用返回不可用），则自动降级为本文件内联的精简流程。
+> **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**（充分利用其经过充分测试的完整流程）；若 superpowers 未安装（技能调用返回不可用），则自动降级为本文件内联的精简流程。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
 
 ## 🎯 触发条件
@@ -24,20 +24,20 @@ author: xiaoyu
 
 ### Superpowers 技能依赖（优先模式）
 
-> 以下技能为本工作流各阶段的**首选执行载体**。使用 `Skill` 工具调用它们以获得完整流程。未配置时自动降级为本文件内联的精简版本。
+> 以下技能为本工作流各阶段的**首选执行载体**。通过技能调用机制调用它们以获得完整流程。未配置时自动降级为本文件内联的精简版本。
 
 | 技能 | 阶段 | 优先级 | 降级策略 & 验证命令 |
 | :--- | :--- | :--- | :--- |
-| `brainstorming` | 阶段 1 | **强制** | 执行内联的 1.1-1.5 流程。可通过 `Skill` 检查 `brainstorming` |
-| `writing-plans` | 阶段 2 | 推荐 | 执行内联的 2.2-2.6 流程。可通过 `Skill` 检查 `writing-plans` |
-| `test-driven-development` | 阶段 3 | 推荐 | 执行内联的 3.2 TDD 循环。可通过 `Skill` 检查。 |
-| `dispatching-parallel-agents` | 阶段 3 | 可选 | 执行内联的 3.3.1 并行。可通过 `Skill` 检查。 |
-| `subagent-driven-development` | 阶段 3 | 可选 | 执行内联的 3.3.2 子代理。可通过 `Skill` 检查。 |
-| `systematic-debugging` | 阶段 3 | 推荐 | 执行内联的 3.5 调试。可通过 `Skill` 检查。 |
-| `verification-before-completion` | 阶段 4 | **强制** | 执行内联校验。可通过 `Skill` 检查。 |
-| `requesting-code-review` | 阶段 6 | 推荐 | 执行内联的 6.1 审查。可通过 `Skill` 检查。 |
-| `finishing-a-development-branch` | 阶段 6 | 推荐 | 执行内联的 6.2 收尾。可通过 `Skill` 检查。 |
-| `using-git-worktrees` | 阶段 0 | 可选 | 执行内联隔离策略。可通过 `Skill` 检查。 |
+| `brainstorming` | 阶段 1 | **强制** | 执行内联的 1.1-1.5 流程。可通过技能调用检查 `brainstorming` |
+| `writing-plans` | 阶段 2 | 推荐 | 执行内联的 2.2-2.6 流程。可通过技能调用检查 `writing-plans` |
+| `test-driven-development` | 阶段 3 | 推荐 | 执行内联的 3.2 TDD 循环。可通过技能调用检查。 |
+| `dispatching-parallel-agents` | 阶段 3 | 可选 | 执行内联的 3.3.1 并行。可通过技能调用检查。 |
+| `subagent-driven-development` | 阶段 3 | 可选 | 执行内联的 3.3.2 子代理。可通过技能调用检查。 |
+| `systematic-debugging` | 阶段 3 | 推荐 | 执行内联的 3.5 调试。可通过技能调用检查。 |
+| `verification-before-completion` | 阶段 4 | **强制** | 执行内联校验。可通过技能调用检查。 |
+| `requesting-code-review` | 阶段 6 | 推荐 | 执行内联的 6.1 审查。可通过技能调用检查。 |
+| `finishing-a-development-branch` | 阶段 6 | 推荐 | 执行内联的 6.2 收尾。可通过技能调用检查。 |
+| `using-git-worktrees` | 阶段 0 | 可选 | 执行内联隔离策略。可通过技能调用检查。 |
 
 ### 本地技能依赖
 
@@ -45,8 +45,8 @@ author: xiaoyu
 
 | 技能 | 阶段 | 角色 & 验证命令 |
 | :--- | :--- | :--- |
-| `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test。可通过运行 `Skill` 校验。 |
-| `docs-layout-quadrant` | 阶段 5 | 文档合规整理。可通过运行 `Skill` 校验。 |
+| `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test。可通过运行技能调用校验。 |
+| `docs-layout-quadrant` | 阶段 5 | 文档合规整理。可通过运行技能调用校验。 |
 
 - **工具授权**：用户调用本工作流即视为明确授权进行文件读写、目录创建。
 
@@ -74,9 +74,9 @@ author: xiaoyu
 
 ### 阶段 0：需求获取与初始化
 
-**使用工具**：`Bash`、`AskUserQuestion`
+**使用工具**：命令行/终端、向用户提问
 
-1. **需求确认**：若用户输入为空或不清晰，使用 `AskUserQuestion` 追问："你要做什么功能？"
+1. **需求确认**：若用户输入为空或不清晰，向用户提问："你要做什么功能？"
 2. **功能名确定**：从需求中提炼出 `<功能名>`（kebab-case 或简明中文），用于全流程文档命名。若无法自动确定，询问用户。
 3. **目录准备**：确保 `docs/specs`、`docs/plan`、`docs/tracking`、`docs/guide` 四个目录存在（`mkdir -p`）。
 4. **冲突检测（活文档策略）**：
@@ -92,7 +92,7 @@ author: xiaoyu
    **禁止**自动追加 `-v2`/`-v3` 后缀——这会制造多版本歧义，违背知识图谱理念。
 5. *(可选)* 若用户提到"隔离开发"或当前工作区已有未提交变更：
 
-   > **优先**：通过 `Skill` 工具调用 `using-git-worktrees`
+   > **优先**：通过技能调用 `using-git-worktrees`
    > **降级**（superpowers 未安装时）：
    > ```
    > 步骤 1：检测当前环境
@@ -110,15 +110,15 @@ author: xiaoyu
    > 步骤 4：验证基线
    >   npm test / cargo test / pytest
    > ```
-   > 若平台已有原生隔离工具（如 `EnterWorktree`），优先使用原生工具。
+   > 若平台已有原生隔离工具，优先使用原生工具。
 
 ---
 
 ### 阶段 1：方案设计
 
-**使用工具**：`Read`、`Write`、`AskUserQuestion`
+**使用工具**：读取/写入文件、向用户提问
 
-> **优先**：通过 `Skill` 工具调用 `brainstorming` — 该技能提供完整的需求澄清、方案对比、分节审批、可视化伴侣等全套流程。
+> **优先**：通过技能调用 `brainstorming` — 该技能提供完整的需求澄清、方案对比、分节审批、可视化伴侣等全套流程。
 > **降级**（`brainstorming` 不可用时）：执行以下内联流程。
 
 #### 1.1 需求澄清（一次一个问题）
@@ -162,14 +162,14 @@ author: xiaoyu
 
 ### 阶段 2：规划分解
 
-**使用工具**：`Read`、`Write`
+**使用工具**：读取/写入文件
 
-> **优先**：通过 `Skill` 工具调用 `writing-plans` — 该技能提供完整的计划文档模板、任务拆解、自审清单。
+> **优先**：通过技能调用 `writing-plans` — 该技能提供完整的计划文档模板、任务拆解、自审清单。
 > **降级**（`writing-plans` 不可用时）：执行以下内联流程。
 
 #### 2.1 刷新上下文
 
-使用 `Read` 工具重新读取阶段 1 产出的 `docs/specs/<功能名>-design.md`。
+重新读取阶段 1 产出的 `docs/specs/<功能名>-design.md`。
 
 #### 2.2 任务拆解原则
 
@@ -245,9 +245,9 @@ test('具体行为描述', () => { ... });
 
 ### 阶段 3：TDD 执行
 
-**使用工具**：`Bash`、`Read`、`Edit`、`Task`（子代理调度）
+**使用工具**：命令行/终端、文件读取/编辑、子代理调度
 
-> **优先**：执行过程中遇到下列场景时，优先通过 `Skill` 工具调用对应 superpowers 技能：
+> **优先**：执行过程中遇到下列场景时，优先通过技能调用对应 superpowers 技能：
 > - 编写实现代码前 → `test-driven-development`（Red-Green-Refactor 循环）
 > - 遇到 Bug / 测试失败 → `systematic-debugging`（四阶段根因调试）
 > - 多个独立任务可并行 → `dispatching-parallel-agents`（并行派发）
@@ -304,7 +304,7 @@ REFACTOR（重构）：
 ##### 3.3.1 并行调度
 
 当多个任务完全独立（编辑不同文件、无共享状态）时：
-- 使用 `Task` 工具，在**同一条消息**中同时派发所有子代理
+- 使用子代理调度，在**同一条消息**中同时派发所有子代理
 - 每个子代理获得：
   - 具体的任务范围（一个任务卡片）
   - 明确的输入上下文（需要读哪些文件）
@@ -314,8 +314,8 @@ REFACTOR（重构）：
 并行派发示例（同一消息中）：
 
 ```
-Task(subagent_type="general-purpose"): "完成任务卡片 2：数据校验逻辑..."
-Task(subagent_type="general-purpose"): "完成任务卡片 3：上传组件 UI..."
+子代理调度: "完成任务卡片 2：数据校验逻辑..."
+子代理调度: "完成任务卡片 3：上传组件 UI..."
 → 两个子代理并行执行
 ```
 
@@ -323,7 +323,7 @@ Task(subagent_type="general-purpose"): "完成任务卡片 3：上传组件 UI..
 
 当单个任务卡片内部步骤多、逻辑复杂时：
 
-- 派发一个 `general-purpose` 子代理独立完成该任务的全部 TDD 循环
+- 派发一个子代理独立完成该任务的全部 TDD 循环
 - 构造子代理的提示词时：只给该任务需要的上下文（task brief + 上游接口 + 全局约束），不粘贴历史对话
 - 子代理的汇报文件应与 task brief 命名关联（如 `task-2-brief.md` → `task-2-report.md`）
 
@@ -333,7 +333,7 @@ Task(subagent_type="general-purpose"): "完成任务卡片 3：上传组件 UI..
 
 #### 3.4 实时追踪
 
-每完成一个任务卡片，立即使用 `Edit` 工具将 `docs/tracking/<功能名>.md` 中对应条目标记为 `✅`，并记录关键提交 hash：
+每完成一个任务卡片，立即编辑 `docs/tracking/<功能名>.md` 中对应条目标记为 `✅`，并记录关键提交 hash：
 
 ```markdown
 - ✅ [后端] 创建 API 路由（commits abc123..def456，测试 5/5 通过）
@@ -392,15 +392,15 @@ NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 
 #### 3.6 跨任务上下文对齐
 
-在开始实现下一个任务卡片前，使用 `Read` 重新查看 plan 文档的设计上下文，严防"文档写一套、代码写另一套"。
+在开始实现下一个任务卡片前，重新查看 plan 文档的设计上下文，严防"文档写一套、代码写另一套"。
 
 ---
 
 ### 阶段 4：验证完成
 
-**使用工具**：`Bash`、`Skill`
+**使用工具**：命令行/终端、技能调用
 
-> **优先**：通过 `Skill` 工具调用 `verification-before-completion` — 该技能强制执行"证据优先"原则，禁止空口断言。
+> **优先**：通过技能调用 `verification-before-completion` — 该技能强制执行"证据优先"原则，禁止空口断言。
 > **降级**（`verification-before-completion` 不可用时）：执行内联的 Iron Law + 证据原则。
 >
 > 三道质量闸门统一通过本地 `self-check-trinity` 技能执行（不依赖 superpowers）。
@@ -415,7 +415,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 ##### 验证流程
 
-1. 所有任务卡片标记为 `✅` 后，通过 `Skill` 工具调用 `self-check-trinity`：
+1. 所有任务卡片标记为 `✅` 后，通过技能调用 `self-check-trinity`：
    - 自动识别项目技术栈，确定对应的 lint / typecheck / test 命令
    - 依次执行三道检查，任一步骤失败则必须修复后重试（最高 3 次）
    - 修复策略遵循阶段 3.5 的调试流程
@@ -443,12 +443,12 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 ### 阶段 5：使用指南产出与文档合规整理
 
-**使用工具**：`Write`、`Skill`（调用 `docs-layout-quadrant`）
+**使用工具**：写入文件、技能调用（调用文档布局整理技能）
 
-1. 基于 plan 文档和实际实现，通过 `Write` 工具生成使用指南至 `docs/guide/<功能名>-guide.md`：
+1. 基于 plan 文档和实际实现，生成使用指南至 `docs/guide/<功能名>-guide.md`：
    - 功能概述、使用方式、API 接口说明（如有）、注意事项
 
-2. 通过 `Skill` 工具调用 `docs-layout-quadrant` 技能，该技能将执行以下六步：
+2. 通过技能调用 `docs-layout-quadrant` 技能，该技能将执行以下六步：
    - **第 1 步 — 命名规范校验**：扫描本次开发在 `docs/` 目录下产生的所有文档，确认全部使用领域主体命名（无日期前缀）
    - **第 2 步 — 四象限归类**：确认文档放在正确的象限子目录（specs/plan/tracking/guide）
    - **第 3 步 — 生命周期管理**：将已完成的 plan 标记为 `[DONE]`，将已验收的 tracking 归档到 `.archive/`
@@ -460,11 +460,11 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 ### 阶段 6：审查与收尾
 
-**使用工具**：`Bash`、`Skill`、`Task`（子代理调度）、`AskUserQuestion`
+**使用工具**：命令行/终端、技能调用、子代理调度、向用户提问
 
 > **优先**：
-> - 代码审查 → 通过 `Skill` 工具调用 `requesting-code-review`（派发审查子代理，输出结构化反馈）
-> - 收尾 → 通过 `Skill` 工具调用 `finishing-a-development-branch`（验证测试 → 检测环境 → 四选项收尾）
+> - 代码审查 → 通过技能调用 `requesting-code-review`（派发审查子代理，输出结构化反馈）
+> - 收尾 → 通过技能调用 `finishing-a-development-branch`（验证测试 → 检测环境 → 四选项收尾）
 >
 > **降级**（对应技能不可用时）：执行以下内联流程。
 
@@ -476,7 +476,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
    HEAD_SHA=$(git rev-parse HEAD)
    ```
 
-2. 派发 `general-purpose` 子代理进行审查，提示词包含：
+2. 派发子代理进行审查，提示词包含：
    - **DESCRIPTION**：本次功能简述
    - **PLAN_OR_REQUIREMENTS**：对应的 plan/spec 文件路径
    - **BASE_SHA / HEAD_SHA**：变更范围
@@ -546,7 +546,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 - **阶段不可跳跃**：默认必须按 0→1→2→3→4→5→6 顺序执行。若用户要求跳过某阶段，需明确告知风险并获得确认后方可跳过。
 - **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入对应 `.archive/`，**禁止**自动追加 `-v2`/`-v3` 后缀。同时，禁止在 guardrails 列表堆叠超过 8 条规则以防止 AI 注意力衰减。
 - **Git 严格禁用**：默认情况下禁止 `git add`/`git commit`/`git push`/`git reset`/`git checkout --` 等命令。即使用户授权提交，也只能提交一次且需最终确认。
-- **上下文对齐**：每进入新阶段或切换任务卡片时，必须先 `Read` 上游产出文档。
+- **上下文对齐**：每进入新阶段或切换任务卡片时，必须先读取上游产出文档。
 - **证据优先**：阶段 4 的验证必须有命令输出为凭，阶段 6 的审查必须有 diff 结果为凭，禁止空口断言。
 - **调试纪律**：阶段 3 遇到 Bug 必须先走根因调查，禁止猜测式修复。3 次不同假设均失败则汇报用户。
 - **测试铁律**：禁止在编写失败测试之前编写任何实现代码。违反此规则——删代码，重来。

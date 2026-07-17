@@ -27,30 +27,30 @@ author: xiaoyu
 
 ### 阶段 1：诊断 — 检查探针是否按动词拆分
 
-**使用工具**：`Glob`、`LS`
+**使用工具**：文件搜索、目录浏览
 
-使用 Glob 或 LS 工具扫描探针目录，检查是否存在按 HTTP 动词拆分的多个文件（如 `health.get.ts` + `health.head.ts` 并存）。不同框架的文件命名模式不同，但核心判断标准一致：同一个 URL 路径不应由多个文件分别处理不同 HTTP 方法。
+扫描探针目录，检查是否存在按 HTTP 动词拆分的多个文件（如 `health.get.ts` + `health.head.ts` 并存）。不同框架的文件命名模式不同，但核心判断标准一致：同一个 URL 路径不应由多个文件分别处理不同 HTTP 方法。
 
 ### 阶段 2：修复 — 合并为单一入口并限制方法
 
-**使用工具**：`Edit`、`Bash`
+**使用工具**：编辑文件、命令行/终端
 
-1. 使用 Edit 工具创建一个统一的探针入口文件（如 `health.ts`、`HealthController.java`、`health.py`），用一个处理函数根据请求方法区分行为。
-2. 在统一的探针端点中，使用 Edit 工具显式声明只接受 `GET` 和 `HEAD` 请求，防止未授权的 POST/PUT/DELETE 等请求到达探针逻辑。
-3. 成功合并后，使用 Bash 执行 `rm` 删除多余的按动词拆分的文件。
+1. 创建一个统一的探针入口文件（如 `health.ts`、`HealthController.java`、`health.py`），用一个处理函数根据请求方法区分行为。
+2. 在统一的探针端点中，显式声明只接受 `GET` 和 `HEAD` 请求，防止未授权的 POST/PUT/DELETE 等请求到达探针逻辑。
+3. 成功合并后，删除多余的按动词拆分的文件。
 
 ### 阶段 3：区分 GET 和 HEAD 行为
 
-**使用工具**：`Edit`
+**使用工具**：编辑文件
 
 - **HEAD 请求**：部分负载均衡器 / CDN / 反向代理的健康检查使用 HEAD，属轻量级探测，返回 `null` 或空 body，仅递交服务存活状态信息（注意：Kubernetes 默认不支持，Kubernetes 的 `httpGet` 探针只发 GET）。
 - **GET 请求**：容器编排探针（如 K8s liveness/readiness）、人工排查使用，返回完整状态信息，如 `{ status: 'ok', uptime, timestamp }`。
 
 ### 阶段 4：验证
 
-**使用工具**：`Bash`
+**使用工具**：命令行/终端
 
-本地启动服务后，使用 Bash 工具运行以下验证：
+本地启动服务后，运行以下验证：
 - `curl -I -X GET http://localhost:PORT/api/health` → 确认状态码为 200
 - `curl -I -X HEAD http://localhost:PORT/api/health` → 确认 HEAD 请求正常响应
 

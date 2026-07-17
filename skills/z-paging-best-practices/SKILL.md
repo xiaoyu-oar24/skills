@@ -1,7 +1,7 @@
 ---
 name: z-paging-best-practices
 description: "z-paging 分页组件的最佳实践指南，强制使用 fixed 模式 + slot 插槽布局。TRIGGER when: 用户需要在 uni-app 项目中新建分页列表页面、实现下拉刷新/上滑加载、或排查 z-paging 相关布局问题（如导航栏遮挡、底部按钮越界）。SKIP: 非 uni-app 项目，或页面不涉及分页列表。"
-version: "1.0.0"
+version: "1.0.1"
 author: xiaoyu
 ---
 

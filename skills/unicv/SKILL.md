@@ -1,7 +1,7 @@
 ---
 name: unicv
 description: "生成基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序项目脚手架。TRIGGER when: 用户要求'初始化前端项目'、'新建空白 uniapp 项目'、'创建一个微信小程序脚手架'或输入了 '/unicv' 时激活。SKIP: 用户正在讨论现有业务逻辑，或当前目录已存在完整的 uniapp 项目结构。"
-version: "1.0.0"
+version: "1.0.1"
 author: xiaoyu
 ---
 

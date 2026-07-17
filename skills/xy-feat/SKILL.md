@@ -1,7 +1,7 @@
 ---
 name: xy-feat
 description: "端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证 → 审查收尾），优先调用 superpowers 技能链，未安装时降级为内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发——包括说'开发新功能'、'写xxx特性'等自然语言描述，以及物理路径匹配等。"
-version: "4.1.0"
+version: "4.1.1"
 author: xiaoyu
 ---
 

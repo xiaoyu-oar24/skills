@@ -1,7 +1,7 @@
 ---
 name: api-name-drift-defense
 description: "防御第三方依赖库在版本升级过程中的 API 重命名、移除或签名变更问题。TRIGGER when: 运行时出现导入或调用报错、之前正常工作的 API 出现类型错误、升级依赖大版本后排查破坏性变更。SKIP: 无关的普通语法错误或纯业务逻辑 Bug。"
-version: "1.1.0"
+version: "1.1.1"
 author: xiaoyu
 ---
 

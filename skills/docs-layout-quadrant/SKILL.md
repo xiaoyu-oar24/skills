@@ -1,7 +1,7 @@
 ---
 name: docs-layout-quadrant
 description: "文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录结构。被 xy-feat 开发工作流在阶段5调用以完成文档合规整理。核心原则：领域主体命名（禁用日期前缀）、象限生命周期管理、知识索引导航。TRIGGER when: 开始新功能需整理文档结构、编写设计文档或进度报告、整理混乱的 docs/ 目录、被 xy-feat 在指南产出阶段（阶段 5）调用。SKIP: 项目根目录的 README.md 或 CLAUDE.md 等全局配置文件。"
-version: "2.2.0"
+version: "2.2.1"
 author: xiaoyu
 ---
 

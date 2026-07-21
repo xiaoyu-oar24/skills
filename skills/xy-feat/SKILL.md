@@ -1,7 +1,7 @@
 ---
 name: xy-feat
-description: "端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证 → 审查收尾），优先调用 superpowers 技能链，未安装时降级为内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发——包括说'开发新功能'、'写xxx特性'等自然语言描述，以及物理路径匹配等。"
-version: "4.1.1"
+description: "端到端功能开发工作流（需求澄清、方案设计、规划分解、TDD 执行、验证、审查收尾），优先调用 superpowers 技能链，未安装时降级为内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发——包括说'开发新功能'、'写xxx特性'等自然语言描述，以及物理路径匹配等。"
+version: "4.2.0"
 author: xiaoyu
 ---
 
@@ -24,29 +24,29 @@ author: xiaoyu
 
 ### Superpowers 技能依赖（优先模式）
 
-> 以下技能为本工作流各阶段的**首选执行载体**。通过技能调用机制调用它们以获得完整流程。未配置时自动降级为本文件内联的精简版本。
+> 以下技能为本工作流各阶段的**首选执行载体**。可用性探测方式：优先尝试技能调用，返回不可用即自动降级为本文件内联的精简版本。
 
-| 技能 | 阶段 | 优先级 | 降级策略 & 验证命令 |
+| 技能 | 阶段 | 优先级 | 降级策略 |
 | :--- | :--- | :--- | :--- |
-| `brainstorming` | 阶段 1 | **强制** | 执行内联的 1.1-1.5 流程。可通过技能调用检查 `brainstorming` |
-| `writing-plans` | 阶段 2 | 推荐 | 执行内联的 2.2-2.6 流程。可通过技能调用检查 `writing-plans` |
-| `test-driven-development` | 阶段 3 | 推荐 | 执行内联的 3.2 TDD 循环。可通过技能调用检查。 |
-| `dispatching-parallel-agents` | 阶段 3 | 可选 | 执行内联的 3.3.1 并行。可通过技能调用检查。 |
-| `subagent-driven-development` | 阶段 3 | 可选 | 执行内联的 3.3.2 子代理。可通过技能调用检查。 |
-| `systematic-debugging` | 阶段 3 | 推荐 | 执行内联的 3.5 调试。可通过技能调用检查。 |
-| `verification-before-completion` | 阶段 4 | **强制** | 执行内联校验。可通过技能调用检查。 |
-| `requesting-code-review` | 阶段 6 | 推荐 | 执行内联的 6.1 审查。可通过技能调用检查。 |
-| `finishing-a-development-branch` | 阶段 6 | 推荐 | 执行内联的 6.2 收尾。可通过技能调用检查。 |
-| `using-git-worktrees` | 阶段 0 | 可选 | 执行内联隔离策略。可通过技能调用检查。 |
+| `brainstorming` | 阶段 1 | **强制** | 执行内联的 1.1-1.5 流程 |
+| `writing-plans` | 阶段 2 | 推荐 | 执行内联的 2.2-2.6 流程 |
+| `test-driven-development` | 阶段 3 | 推荐 | 执行内联的 3.2 TDD 循环 |
+| `dispatching-parallel-agents` | 阶段 3 | 可选 | 执行内联的 3.3.1 并行 |
+| `subagent-driven-development` | 阶段 3 | 可选 | 执行内联的 3.3.2 子代理 |
+| `systematic-debugging` | 阶段 3 | 推荐 | 执行内联的 3.5 调试 |
+| `verification-before-completion` | 阶段 4 | **强制** | 执行内联校验 |
+| `requesting-code-review` | 阶段 6 | 推荐 | 执行内联的 6.1 审查 |
+| `finishing-a-development-branch` | 阶段 6 | 推荐 | 执行内联的 6.2 收尾 |
+| `using-git-worktrees` | 阶段 0 | 可选 | 执行内联隔离策略 |
 
 ### 本地技能依赖
 
 > 以下技能为本仓库自维护，不受外部安装状态影响。
 
-| 技能 | 阶段 | 角色 & 验证命令 |
+| 技能 | 阶段 | 角色 |
 | :--- | :--- | :--- |
-| `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test。可通过运行技能调用校验。 |
-| `docs-layout-quadrant` | 阶段 5 | 文档合规整理。可通过运行技能调用校验。 |
+| `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test |
+| `docs-layout-quadrant` | 阶段 5 | 文档合规整理 |
 
 - **工具授权**：用户调用本工作流即视为明确授权进行文件读写、目录创建。
 
@@ -77,7 +77,7 @@ author: xiaoyu
 **使用工具**：命令行/终端、向用户提问
 
 1. **需求确认**：若用户输入为空或不清晰，向用户提问："你要做什么功能？"
-2. **功能名确定**：从需求中提炼出 `<功能名>`（kebab-case 或简明中文），用于全流程文档命名。若无法自动确定，询问用户。
+2. **功能名确定**：从需求中提炼出 `<功能名>`（kebab-case 或简明中文），用于全流程文档命名。提炼结果**必须经用户确认**（或用户明确授权自动定名）后方可使用。
 3. **目录准备**：确保 `docs/specs`、`docs/plan`、`docs/tracking`、`docs/guide` 四个目录存在（`mkdir -p`）。
 4. **冲突检测（活文档策略）**：
 
@@ -405,7 +405,7 @@ NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 >
 > 三道质量闸门统一通过本地 `self-check-trinity` 技能执行（不依赖 superpowers）。
 
-##### The Iron Law
+#### The Iron Law
 
 ```
 NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
@@ -413,7 +413,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 在没有运行验证命令并看到输出之前，**禁止**声称"通过"、"完成"、"没问题"。
 
-##### 验证流程
+#### 验证流程
 
 1. 所有任务卡片标记为 `✅` 后，通过技能调用 `self-check-trinity`：
    - 自动识别项目技术栈，确定对应的 lint / typecheck / test 命令
@@ -430,7 +430,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 4. 验证全部通过 → 进入阶段 5
 
-##### 常见反模式（禁止）
+#### 常见反模式（禁止）
 
 | 声称 | 实际需要 |
 | :--- | :--- |
@@ -448,13 +448,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 1. 基于 plan 文档和实际实现，生成使用指南至 `docs/guide/<功能名>-guide.md`：
    - 功能概述、使用方式、API 接口说明（如有）、注意事项
 
-2. 通过技能调用 `docs-layout-quadrant` 技能，该技能将执行以下六步：
-   - **第 1 步 — 命名规范校验**：扫描本次开发在 `docs/` 目录下产生的所有文档，确认全部使用领域主体命名（无日期前缀）
-   - **第 2 步 — 四象限归类**：确认文档放在正确的象限子目录（specs/plan/tracking/guide）
-   - **第 3 步 — 生命周期管理**：将已完成的 plan 标记为 `[DONE]`，将已验收的 tracking 归档到 `.archive/`
-   - **第 4 步 — 知识索引更新**：更新 `docs/INDEX.md`，将本次产出的文档登记到导航网
-   - **第 5 步 — 移动文件与修复链接**：使用 `git mv` 保留历史，修正所有相对路径链接
-   - **第 6 步 — 验证**：确认无旧路径残留、无日期前缀残留、INDEX.md 链接可访问
+2. 通过技能调用 `docs-layout-quadrant` 完成文档合规整理，覆盖：命名规范校验（无日期前缀）、四象限归类、生命周期管理（plan 标记 `[DONE]`、已验收 tracking 归档）、`docs/INDEX.md` 索引更新、移动文件与修复链接、残留验证。具体步骤与判定标准以该技能定义为准。
 
 ---
 
@@ -544,8 +538,8 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 - **🚫 禁止日期前缀**：所有产出文档必须使用领域主体命名（`<功能名>-design.md`），**禁止** `YYYY-MM-DD-<功能名>-design.md` 格式。文档是知识图谱，不是流水账。
 - **阶段不可跳跃**：默认必须按 0→1→2→3→4→5→6 顺序执行。若用户要求跳过某阶段，需明确告知风险并获得确认后方可跳过。
-- **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入对应 `.archive/`，**禁止**自动追加 `-v2`/`-v3` 后缀。同时，禁止在 guardrails 列表堆叠超过 8 条规则以防止 AI 注意力衰减。
-- **Git 严格禁用**：默认情况下禁止 `git add`/`git commit`/`git push`/`git reset`/`git checkout --` 等命令。即使用户授权提交，也只能提交一次且需最终确认。
+- **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入对应 `.archive/`，**禁止**自动追加 `-v2`/`-v3` 后缀。
+- **Git 写操作需授权**：`git add`/`git commit`/`git push`/`git reset`/`git checkout --` 等写操作必须先获得用户明确授权（逐次授权，或在阶段 2 计划获批时对全流程提交节点整段授权）；未授权时禁止执行。
 - **上下文对齐**：每进入新阶段或切换任务卡片时，必须先读取上游产出文档。
 - **证据优先**：阶段 4 的验证必须有命令输出为凭，阶段 6 的审查必须有 diff 结果为凭，禁止空口断言。
 - **调试纪律**：阶段 3 遇到 Bug 必须先走根因调查，禁止猜测式修复。3 次不同假设均失败则汇报用户。

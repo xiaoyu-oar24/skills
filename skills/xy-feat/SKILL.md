@@ -1,7 +1,7 @@
 ---
 name: xy-feat
-description: "端到端功能开发工作流（需求澄清、方案设计、规划分解、TDD 执行、验证、审查收尾），优先调用 superpowers 技能链，未安装时降级为内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发——包括说'开发新功能'、'写xxx特性'等自然语言描述，以及物理路径匹配等。"
-version: "4.2.0"
+description: "端到端功能开发工作流（需求澄清、方案设计、规划分解、TDD 执行、验证、审查收尾），优先调用 superpowers 技能链，未安装时降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发——包括说'开发新功能'、'写xxx特性'等自然语言描述，以及物理路径匹配等。"
+version: "4.3.0"
 author: xiaoyu
 ---
 
@@ -9,7 +9,7 @@ author: xiaoyu
 
 > **生命周期阶段**：稳定
 > **定位**：将 **需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证完成 → 审查收尾** 串成一条端到端流水线。
-> **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**（充分利用其经过充分测试的完整流程）；若 superpowers 未安装（技能调用返回不可用），则自动降级为本文件内联的精简流程。
+> **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**；若 superpowers 未安装（技能调用返回不可用），则按需读取 `references/` 下的对应降级文件执行内联流程（对应关系见"Superpowers 技能依赖"表）。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
 
 ## 🎯 触发条件
@@ -24,20 +24,21 @@ author: xiaoyu
 
 ### Superpowers 技能依赖（优先模式）
 
-> 以下技能为本工作流各阶段的**首选执行载体**。可用性探测方式：优先尝试技能调用，返回不可用即自动降级为本文件内联的精简版本。
+> 以下技能为本工作流各阶段的**首选执行载体**。可用性探测方式：优先尝试技能调用，返回不可用即自动降级为 `references/` 内联流程。
+> **优先级说明**："强制"指该**阶段**不可跳过；执行载体不可用时必须走降级流程。
 
 | 技能 | 阶段 | 优先级 | 降级策略 |
 | :--- | :--- | :--- | :--- |
-| `brainstorming` | 阶段 1 | **强制** | 执行内联的 1.1-1.5 流程 |
-| `writing-plans` | 阶段 2 | 推荐 | 执行内联的 2.2-2.6 流程 |
-| `test-driven-development` | 阶段 3 | 推荐 | 执行内联的 3.2 TDD 循环 |
-| `dispatching-parallel-agents` | 阶段 3 | 可选 | 执行内联的 3.3.1 并行 |
-| `subagent-driven-development` | 阶段 3 | 可选 | 执行内联的 3.3.2 子代理 |
-| `systematic-debugging` | 阶段 3 | 推荐 | 执行内联的 3.5 调试 |
-| `verification-before-completion` | 阶段 4 | **强制** | 执行内联校验 |
-| `requesting-code-review` | 阶段 6 | 推荐 | 执行内联的 6.1 审查 |
-| `finishing-a-development-branch` | 阶段 6 | 推荐 | 执行内联的 6.2 收尾 |
-| `using-git-worktrees` | 阶段 0 | 可选 | 执行内联隔离策略 |
+| `brainstorming` | 阶段 1 | **强制** | 读取 `references/fallback-init-design.md` 执行内联流程 |
+| `writing-plans` | 阶段 2 | 推荐 | 读取 `references/fallback-plan.md` 执行内联流程 |
+| `test-driven-development` | 阶段 3 | 推荐 | 读取 `references/fallback-tdd.md` 执行内联 TDD 循环 |
+| `dispatching-parallel-agents` | 阶段 3 | 可选 | 读取 `references/fallback-tdd.md` 执行内联并行策略 |
+| `subagent-driven-development` | 阶段 3 | 可选 | 读取 `references/fallback-tdd.md` 执行内联子代理策略 |
+| `systematic-debugging` | 阶段 3 | 推荐 | 读取 `references/fallback-tdd.md` 执行内联四阶段调试法 |
+| `verification-before-completion` | 阶段 4 | **强制** | 读取 `references/fallback-verify-finish.md` 执行内联校验 |
+| `requesting-code-review` | 阶段 6 | 推荐 | 读取 `references/fallback-verify-finish.md` 执行内联审查 |
+| `finishing-a-development-branch` | 阶段 6 | 推荐 | 读取 `references/fallback-verify-finish.md` 执行内联收尾 |
+| `using-git-worktrees` | 阶段 0 | 可选 | 读取 `references/fallback-init-design.md` 执行内联隔离策略 |
 
 ### 本地技能依赖
 
@@ -69,6 +70,7 @@ author: xiaoyu
 ## 📖 标准工作流
 
 > **总览**：`阶段 0 初始化` → `阶段 1 方案设计` → `阶段 2 规划分解` → `阶段 3 TDD 执行` → `阶段 4 验证完成` → `阶段 5 产出指南` → `阶段 6 审查收尾`
+> 本文件只定义各阶段的调度逻辑、产出物与出入口条件；各阶段的**完整操作细节**在降级时按需从 `references/` 加载。
 
 ---
 
@@ -91,25 +93,8 @@ author: xiaoyu
 
    **禁止**自动追加 `-v2`/`-v3` 后缀——这会制造多版本歧义，违背知识图谱理念。
 5. *(可选)* 若用户提到"隔离开发"或当前工作区已有未提交变更：
-
    > **优先**：通过技能调用 `using-git-worktrees`
-   > **降级**（superpowers 未安装时）：
-   > ```
-   > 步骤 1：检测当前环境
-   >   git rev-parse --show-toplevel  → 确认在 git 仓库中
-   >   git branch --show-current      → 确认当前分支
-   >
-   > 步骤 2：询问用户
-   >   "是否需要在隔离的 git worktree 中进行开发？"
-   >
-   > 步骤 3：若用户同意
-   >   mkdir -p .worktrees
-   >   git worktree add .worktrees/<功能名> -b feat/<功能名>
-   >   cd .worktrees/<功能名>
-   >
-   > 步骤 4：验证基线
-   >   npm test / cargo test / pytest
-   > ```
+   > **降级**：读取 `references/fallback-init-design.md` 的"阶段 0 降级"节执行
    > 若平台已有原生隔离工具，优先使用原生工具。
 
 ---
@@ -118,45 +103,12 @@ author: xiaoyu
 
 **使用工具**：读取/写入文件、向用户提问
 
-> **优先**：通过技能调用 `brainstorming` — 该技能提供完整的需求澄清、方案对比、分节审批、可视化伴侣等全套流程。
-> **降级**（`brainstorming` 不可用时）：执行以下内联流程。
+> **优先**：通过技能调用 `brainstorming`。
+> **降级**：读取 `references/fallback-init-design.md`，执行内联流程（需求澄清 → 方案对比 → 分节呈现审批 → 撰写设计文档 → 自审）。
 
-#### 1.1 需求澄清（一次一个问题）
+**必须产出**：`docs/specs/<功能名>-design.md`（背景、方案选择理由、架构设计、接口定义、数据模型、测试策略）。
 
-- 阅读项目现有文件、文档、最近提交，理解当前上下文
-- 向用户提问以细化需求，**每次只问一个问题**（多选优先于开放式）：
-  - 目标是什么？成功标准？
-  - 有什么约束条件（技术栈、性能、兼容性）？
-  - 与现有系统的接口关系？
-- 若需求包含多个独立子系统，先协助用户拆分为子项目，单独走 xy-feat 流程
-
-#### 1.2 方案对比
-
-- 提出 **2-3 种可行方案**，列出各自的优劣势和你的推荐
-- 引导用户做出选择
-
-#### 1.3 设计呈现与审批
-
-- 呈现设计方案，分节展示（架构、组件、数据流、错误处理、测试策略）：
-  - 简单部分：几句话概括
-  - 复杂部分：200-300 字详细说明
-- 每节呈现后询问用户确认
-- **设计隔离原则**：每个模块应有明确边界和接口，可独立理解和测试
-
-#### 1.4 撰写设计文档
-
-- 将最终审批通过的设计写入 `docs/specs/<功能名>-design.md`
-- 文档应包含：背景、方案选择理由、架构设计、接口定义、数据模型、测试策略
-
-#### 1.5 设计文档自审
-
-写完后以新视角快速自审：
-1. 占位符扫描：是否有 "TBD"/"TODO"/未完成的章节？
-2. 内部一致性：不同章节之间是否有矛盾？
-3. 范围检查：是否聚焦足够，还是需要进一步拆解？
-4. 歧义检查：是否有任何需求可被两种方式解读？
-
-修正发现的问题后，请用户审阅 spec 文件，获得批准后再进入阶段 2。
+**阶段出口**：设计文档完成自审（无占位符、内部一致、范围聚焦、无歧义）并获用户批准。
 
 ---
 
@@ -164,82 +116,14 @@ author: xiaoyu
 
 **使用工具**：读取/写入文件
 
-> **优先**：通过技能调用 `writing-plans` — 该技能提供完整的计划文档模板、任务拆解、自审清单。
-> **降级**（`writing-plans` 不可用时）：执行以下内联流程。
+> **优先**：通过技能调用 `writing-plans`。
+> **降级**：读取 `references/fallback-plan.md`，执行内联流程（任务拆解原则、任务卡片四要素、规划文档模板、自审清单）。
 
-#### 2.1 刷新上下文
+**必须产出**：
+- `docs/plan/<功能名>-plan.md`：任务拆解到 2-5 分钟粒度，每个任务卡片含 Files / Interfaces / Steps / Expected，**禁止 TBD/TODO**。
+- `docs/tracking/<功能名>.md`：初始化全部任务卡片状态为 `⏳`（格式模板见 `references/fallback-plan.md`）。
 
-重新读取阶段 1 产出的 `docs/specs/<功能名>-design.md`。
-
-#### 2.2 任务拆解原则
-
-- **每任务一动作**（2-5 分钟可完成）：写测试 → 验证失败 → 写实现 → 验证通过 → 提交
-- **任务自包含**：每个任务产出可独立测试的交付物
-- **边界清晰**：一个评审者应当可以"批准任务 A 但拒绝任务 B"
-- 按"后端 → 前端 → 集成"的顺序排列任务
-
-#### 2.3 每个任务卡片必须包含
-
-- **Files**：创建/修改哪些文件（精确路径）
-- **Interfaces**：消费哪些上游产出、产出哪些下游依赖（精确签名）
-- **Steps**：逐步操作列表，每步包含实际的代码块和命令（禁止 TBD/TODO）
-- **Expected**：每步的预期结果（如 "FAIL with 'function not defined'"）
-
-#### 2.4 规划文档输出
-
-将规划结果写入 `docs/plan/<功能名>-plan.md`：
-
-```markdown
-# [功能名] 实施计划
-
-> **目标：** [一句话描述]
-
-**架构：** [2-3 句技术方案概述]
-
-**技术栈：** [关键技术和库]
-
-## 全局约束
-[从 spec 中提取的跨任务约束 — 版本要求、命名规则、平台要求等]
-
----
-
-### Task 1: [组件名]
-
-**Files:**
-- Create: `src/path/to/file.ts`
-- Test: `tests/path/to/test.ts`
-
-- [ ] **Step 1: 编写失败测试**
-```typescript
-test('具体行为描述', () => { ... });
-```
-- [ ] **Step 2: 验证测试失败** → `pytest tests/path -v` → Expected: FAIL
-- [ ] **Step 3: 编写最小实现** → 仅通过测试所需的最少代码
-- [ ] **Step 4: 验证测试通过** → Expected: PASS
-- [ ] **Step 5: 提交** → `git commit -m "feat: 组件描述"`
-```
-
-#### 2.5 创建进度跟踪
-
-同步创建 `docs/tracking/<功能名>.md`，初始化所有任务卡片状态为 `⏳`：
-
-```markdown
-# 状态总览
-创建日期：YYYY-MM-DD | 当前阶段：阶段 2
-
-# 任务卡片
-- ⏳ [后端] Task 1: 创建 API 路由
-- ⏳ [后端] Task 2: 数据校验逻辑
-- ⏳ [前端] Task 3: UI 组件
-- ⏳ [前端] Task 4: API 联调
-- ⏳ [集成] Task 5: 端到端验证
-```
-
-#### 2.6 自审规划文档
-
-- **Spec 覆盖**：spec 中的每个需求是否都能指向一个 task？
-- **占位符扫描**：是否有 TBD/TODO/"添加适当的错误处理"等占位？
-- **类型一致性**：后面 task 引用的类型/签名是否与前面 task 定义的完全一致？
+**阶段出口**：规划自审通过（Spec 全覆盖、无占位符、跨任务类型/签名一致）并获用户确认。
 
 ---
 
@@ -248,151 +132,25 @@ test('具体行为描述', () => { ... });
 **使用工具**：命令行/终端、文件读取/编辑、子代理调度
 
 > **优先**：执行过程中遇到下列场景时，优先通过技能调用对应 superpowers 技能：
-> - 编写实现代码前 → `test-driven-development`（Red-Green-Refactor 循环）
-> - 遇到 Bug / 测试失败 → `systematic-debugging`（四阶段根因调试）
-> - 多个独立任务可并行 → `dispatching-parallel-agents`（并行派发）
-> - 单个复杂任务 → `subagent-driven-development`（子代理独立执行 + review gate）
+> - 编写实现代码前 → `test-driven-development`
+> - 遇到 Bug / 测试失败 → `systematic-debugging`
+> - 多个独立任务可并行 → `dispatching-parallel-agents`
+> - 单个复杂任务 → `subagent-driven-development`
 >
-> **降级**（对应技能不可用时）：执行以下内联流程。
+> **降级**：读取 `references/fallback-tdd.md`（含单任务 TDD 循环、任务调度决策树、四阶段调试法）。
 
-#### 3.1 执行原则
+**Iron Law**：
 
 ```
 NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
 ```
 
-**Iron Law**：先写测试 → 看它失败 → 写最小实现 → 看它通过 → 重构。在测试失败之前编写的任何实现代码，一律删除重来。
+先写测试 → 看它失败 → 写最小实现 → 看它通过 → 重构。在测试失败之前编写的任何实现代码，一律删除重来。
 
-#### 3.2 单任务 TDD 循环
-
-对每个任务卡片按以下循环执行：
-
-```
-RED（红灯）：
-  1. 基于 plan 中定义的测试，编写一个最小测试用例
-  2. 运行测试 → 必须 FAIL
-  3. 确认失败原因是你预期的（如 "function not defined"），而非笔误
-
-GREEN（绿灯）：
-  4. 编写最少量的代码使测试通过
-  5. 运行测试 → 必须 PASS
-  6. 不能添加测试未要求的功能（YAGNI）
-
-REFACTOR（重构）：
-  7. 消除重复、改善命名、提取公共逻辑
-  8. 保持测试绿灯，不添加新行为
-  9. 进入下一个 RED 循环
-```
-
-**验证要求**：
-- 测试必须用真实代码（避免 mock，除非依赖外部服务）
-- 测试名必须清晰描述行为（禁止 `test('test1')`）
-- 每个新函数/方法必须有对应的失败测试
-
-#### 3.3 任务调度策略
-
-**按以下决策树选择执行方式：**
-
-```
-任务卡片中有 2+ 个无共享状态的独立任务？
-  ├── 是 → 并行调度（见 3.3.1）
-  └── 否 → 单个任务内部步骤多、复杂度高？
-            ├── 是 → 子代理独立执行（见 3.3.2）
-            └── 否 → 顺序执行（见 3.3.3）
-```
-
-##### 3.3.1 并行调度
-
-当多个任务完全独立（编辑不同文件、无共享状态）时：
-- 使用子代理调度，在**同一条消息**中同时派发所有子代理
-- 每个子代理获得：
-  - 具体的任务范围（一个任务卡片）
-  - 明确的输入上下文（需要读哪些文件）
-  - 清晰的输出要求（返回什么内容）
-- 禁止让子代理继承主会话的完整历史上下文
-
-并行派发示例（同一消息中）：
-
-```
-子代理调度: "完成任务卡片 2：数据校验逻辑..."
-子代理调度: "完成任务卡片 3：上传组件 UI..."
-→ 两个子代理并行执行
-```
-
-##### 3.3.2 子代理独立执行
-
-当单个任务卡片内部步骤多、逻辑复杂时：
-
-- 派发一个子代理独立完成该任务的全部 TDD 循环
-- 构造子代理的提示词时：只给该任务需要的上下文（task brief + 上游接口 + 全局约束），不粘贴历史对话
-- 子代理的汇报文件应与 task brief 命名关联（如 `task-2-brief.md` → `task-2-report.md`）
-
-##### 3.3.3 顺序执行
-
-不满足并行或子代理条件时，按 task 列表顺序逐个执行。
-
-#### 3.4 实时追踪
-
-每完成一个任务卡片，立即编辑 `docs/tracking/<功能名>.md` 中对应条目标记为 `✅`，并记录关键提交 hash：
-
-```markdown
-- ✅ [后端] 创建 API 路由（commits abc123..def456，测试 5/5 通过）
-```
-
-#### 3.5 遇到 Bug 或测试失败
-
-```
-NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
-```
-
-**内联自 `systematic-debugging` 的四阶段调试法：**
-
-##### Phase 1：根因调查（禁止跳过）
-
-1. **精读错误信息**：不要跳过任何报错或警告，读完整栈追踪
-2. **稳定复现**：确认能稳定触发，记录精确复现步骤
-3. **检查最近变更**：`git diff`、最近提交、新依赖、配置变更
-4. **数据流追踪**：错误值从哪来？谁传了错误值？向上追溯直到找到源头
-5. **多组件系统**：在组件边界处分别插桩，收集证据定位故障层
-
-##### Phase 2：模式分析
-
-- 在同一代码库中寻找类似的、正常工作的代码
-- 逐行对比差异，不放过任何微小区别
-
-##### Phase 3：假设与验证
-
-1. **形成单一假设**："我认为 X 是根因，因为 Y"（写下来）
-2. **最小化验证**：做最小的改动来验证假设，一次只改一个变量
-3. **根据结果决策**：
-   - 验证通过 → 进入 Phase 4
-   - 验证失败 → 形成**新的、不同的**假设（不能重复同一假设）
-
-##### Phase 4：实施修复
-
-1. 基于 Phase 1 找到的根因，编写能复现 Bug 的失败测试
-2. 实施**单一修复**（仅改根因，不做顺手优化）
-3. 验证：测试通过、无回归、Bug 确实解决
-
-##### 重试策略（关键）
-
-- **最多重试 3 次**
-- 每次重试**必须基于不同的调试假设**（通过 Phase 1-3 产出）
-- 同一假设连续失败 2 次 → 立即暂停并汇报用户
-- 3 次不同假设均失败 → **质疑架构**：是否是模式本身有问题？向用户汇报并讨论重构方案
-
-##### 红牌警示
-
-一旦出现以下思维，立即回到 Phase 1：
-- "先快速修一下，稍后调查"
-- "试试改 X 看看效果"
-- "我可能知道问题了，直接修"
-- "再加一个修复试试"（已经试了 2 次以上）
-- 每次修复都暴露不同位置的新问题 → 这是架构问题信号
-
-#### 3.6 跨任务上下文对齐
-
-在开始实现下一个任务卡片前，重新查看 plan 文档的设计上下文，严防"文档写一套、代码写另一套"。
+**执行要求（任何模式下都必须遵守）**：
+- **实时追踪**：每完成一个任务卡片，立即将 `docs/tracking/<功能名>.md` 对应条目标记为 `✅`，并记录关键提交 hash。
+- **调试纪律**：遇到 Bug 先走根因调查（四阶段调试法），最多 3 次不同假设的重试，禁止猜测式修复。
+- **跨任务对齐**：开始下一个任务卡片前，重新查看 plan 文档的设计上下文，严防"文档写一套、代码写另一套"。
 
 ---
 
@@ -400,12 +158,10 @@ NO FIXES WITHOUT ROOT CAUSE INVESTIGATION FIRST
 
 **使用工具**：命令行/终端、技能调用
 
-> **优先**：通过技能调用 `verification-before-completion` — 该技能强制执行"证据优先"原则，禁止空口断言。
-> **降级**（`verification-before-completion` 不可用时）：执行内联的 Iron Law + 证据原则。
->
-> 三道质量闸门统一通过本地 `self-check-trinity` 技能执行（不依赖 superpowers）。
+> **优先**：通过技能调用 `verification-before-completion`；三道质量闸门统一通过本地 `self-check-trinity` 技能执行（不依赖 superpowers）。
+> **降级**：读取 `references/fallback-verify-finish.md` 执行内联校验。
 
-#### The Iron Law
+**The Iron Law**：
 
 ```
 NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
@@ -413,31 +169,10 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 在没有运行验证命令并看到输出之前，**禁止**声称"通过"、"完成"、"没问题"。
 
-#### 验证流程
-
-1. 所有任务卡片标记为 `✅` 后，通过技能调用 `self-check-trinity`：
-   - 自动识别项目技术栈，确定对应的 lint / typecheck / test 命令
-   - 依次执行三道检查，任一步骤失败则必须修复后重试（最高 3 次）
-   - 修复策略遵循阶段 3.5 的调试流程
-
-2. **证据优先原则**：
-   - 每个验证命令必须**在当前消息中运行**，输出必须是新鲜的
-   - 禁止使用"应该通过了"、"看起来没问题"等模糊表述
-   - 禁止信任之前运行的缓存结果
-   - 禁止只跑 lint 就声称"质量检查通过"（lint ≠ typecheck ≠ test）
-
-3. 验证未通过 → 回到阶段 3，走调试流程修复后重新走阶段 4
-
-4. 验证全部通过 → 进入阶段 5
-
-#### 常见反模式（禁止）
-
-| 声称 | 实际需要 |
-| :--- | :--- |
-| "测试通过了" | 运行测试命令，输出显示 0 failures |
-| "代码没毛病" | Lint + Typecheck + Test 三者全部通过 |
-| "应该没问题" | Run the verification commands NOW |
-| "之前跑过是好的" | 代码可能已变更，必须重新运行 |
+**执行要求**：
+- 所有任务卡片标记 `✅` 后，调用 `self-check-trinity` 依次执行 lint → typecheck → test，任一失败则修复后重试（最高 3 次）。
+- 验证命令必须**在当前消息中运行**，证据必须新鲜；禁止信任缓存结果；禁止只跑 lint 就声称"质量检查通过"。
+- 验证未通过 → 回到阶段 3 走调试流程；全部通过 → 进入阶段 5。
 
 ---
 
@@ -457,80 +192,16 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 **使用工具**：命令行/终端、技能调用、子代理调度、向用户提问
 
 > **优先**：
-> - 代码审查 → 通过技能调用 `requesting-code-review`（派发审查子代理，输出结构化反馈）
-> - 收尾 → 通过技能调用 `finishing-a-development-branch`（验证测试 → 检测环境 → 四选项收尾）
+> - 代码审查 → 通过技能调用 `requesting-code-review`
+> - 收尾 → 通过技能调用 `finishing-a-development-branch`
 >
-> **降级**（对应技能不可用时）：执行以下内联流程。
+> **降级**：读取 `references/fallback-verify-finish.md` 执行内联审查与收尾。
 
-#### 6.1 代码审查
-
-1. 获取 git SHAs：
-   ```bash
-   BASE_SHA=$(git merge-base main HEAD 2>/dev/null || git merge-base master HEAD 2>/dev/null)
-   HEAD_SHA=$(git rev-parse HEAD)
-   ```
-
-2. 派发子代理进行审查，提示词包含：
-   - **DESCRIPTION**：本次功能简述
-   - **PLAN_OR_REQUIREMENTS**：对应的 plan/spec 文件路径
-   - **BASE_SHA / HEAD_SHA**：变更范围
-   - 要求输出：Strengths、Critical/Important/Minor Issues、Assessment
-
-3. **审查结果处理**：
-   - Critical：立即修复 → 回到阶段 3 → 重新走阶段 4 → 5 → 6
-   - Important：修复后再继续
-   - Minor：记录，可以后续处理
-   - 若审查者判断有误，可以用技术理由反驳
-
-4. 审查通过后进入收尾
-
-#### 6.2 收尾
-
-1. **验证测试**（阶段 6 仍须重新确认）：
-   根据项目锁文件判定最适合的测试指令（如 `npm test`、`cargo test`、`pytest` 或 `go test ./...`），通过 Bash 执行。测试未通过则停止，不允许进入收尾选项。
-
-2. **检测环境**：
-   ```bash
-   git rev-parse --git-dir
-   git rev-parse --git-common-dir
-   ```
-
-3. **呈现结构化选项**：
-
-   ```
-   所有任务完成，验证通过。如何处理此分支？
-
-   1. 合并回主分支（本地）
-   2. 推送并创建 Pull Request
-   3. 保持分支不动（我稍后自己处理）
-   4. 放弃本次开发
-
-   请选择：
-   ```
-
-4. **选项执行**：
-
-   **选项 1（本地合并）**：
-   ```bash
-   git checkout <base-branch> && git pull
-   git merge feat/<功能名>
-   <运行测试确认合并无回归>
-   ```
-   合并成功后清理 worktree（如有）并删除分支
-
-   **选项 2（创建 PR）**：
-   ```bash
-   git push -u origin feat/<功能名>
-   ```
-   不清理 worktree（用户需要迭代 PR feedback）
-
-   **选项 3（保持）**：不做任何操作
-
-   **选项 4（放弃）**：
-   - 必须获得用户输入 `discard` 确认
-   - 确认后清理 worktree（如有）并强制删除分支
-
-5. **Git 操作必须由用户明确授权**，禁止自动提交或推送
+**安全要点（任何模式下都必须遵守）**：
+- 审查范围用 `git merge-base` 确定 `BASE_SHA..HEAD_SHA`；审查问题按 Critical（立即修复并重走 3→4→5→6）/ Important（修复后继续）/ Minor（记录）分级处理。
+- 收尾前必须**重新运行测试**确认通过，未通过则停止。
+- 收尾四选项：`1 本地合并` / `2 推送并创建 PR` / `3 保持分支` / `4 放弃`；选项 4 必须获得用户输入 `discard` 确认后才可执行。
+- **Git 写操作必须由用户明确授权**，禁止自动提交或推送。
 
 ---
 

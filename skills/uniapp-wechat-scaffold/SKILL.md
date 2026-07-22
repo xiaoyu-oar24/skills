@@ -1,11 +1,11 @@
 ---
-name: unicv
-description: "生成基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序项目脚手架。TRIGGER when: 用户要求'初始化前端项目'、'新建空白 uniapp 项目'、'创建一个微信小程序脚手架'或输入了 '/unicv' 时激活。SKIP: 用户正在讨论现有业务逻辑，或当前目录已存在完整的 uniapp 项目结构。"
-version: "1.0.1"
+name: uniapp-wechat-scaffold
+description: "生成基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序项目脚手架。TRIGGER when: 用户要求'初始化前端项目'、'新建空白 uniapp 项目'、'创建一个微信小程序脚手架'或输入了 '/uniapp-wechat-scaffold' 时激活。SKIP: 用户正在讨论现有业务逻辑，或当前目录已存在完整的 uniapp 项目结构。"
+version: "1.0.2"
 author: xiaoyu
 ---
 
-# unicv
+# uniapp-wechat-scaffold
 
 > **生命周期阶段**：稳定
 > 基于 UniApp 3.0 + Vue 3.5 + TypeScript + Pinia + uv-ui 的微信小程序项目模版标准操作手册（SOP）。
@@ -16,19 +16,21 @@ author: xiaoyu
 ## 🎯 触发条件
 
 - 当用户要求创建基于 Uniapp 或微信小程序的初始前端项目架构时
-- 当用户输入 `/unicv` 或要求"初始化前端项目"、"新建空白 uniapp 项目"、"创建微信小程序脚手架"时
+- 当用户输入 `/uniapp-wechat-scaffold` 或要求"初始化前端项目"、"新建空白 uniapp 项目"、"创建微信小程序脚手架"时
+- **SKIP**：用户正在讨论现有业务逻辑，或当前目录已存在完整的 uniapp 项目结构（避免误判与覆盖）。
 
 ## ⚙️ 依赖与先决条件
 
 - Node 环境（推荐 `20.19.0`，最低 18），可通过运行 `node -v` 检查。
 - 全局安装/项目可用的包管理工具 `pnpm`（失败时可以回退到 `npm`），可通过运行 `pnpm -v` 校验探测。
 - 一个全新的空白项目目录。可通过运行 `ls -A` 确认是否为空目录。
+- 运行环境假设为类 Unix 终端（示例命令使用 `ls`）。
 
 ## 📖 标准工作流
 
 严格按照以下顺序及工具执行项目生成，不可跳过或自行臆造代码：
 
-1. **阶段 1：环境检查** —— 检查当前目录是否已有内容。若目录非空，向用户确认是否在当前目录下创建子目录。未得到确认前不允许动工。
+1. **阶段 1：环境检查** —— 检查当前目录是否已有内容。若目录非空，向用户确认是否在当前目录下创建子目录，未得到确认前不允许动工。同时确认本技能 `references/` 下 5 个模板文件（`package-json.md`、`project-structure.md`、`core-configs.md`、`build-scripts.md`、`code-templates.md`）齐全可读，缺失时立即中止并向用户报告。
 2. **阶段 2：读取参考库文件** —— 分批读取本技能目录下的参考文件，读取后立即写入：
    - 读取 `references/package-json.md` → 生成项目中的 `package.json`。
    - 读取 `references/project-structure.md` → 执行 `mkdir -p` 建立所需的目录骨架。

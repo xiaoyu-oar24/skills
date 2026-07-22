@@ -1,9 +1,11 @@
 ---
 name: self-check-trinity
 description: "强制在交付任何代码变更前依次执行 lint、typecheck、test 三道质量检查。TRIGGER when: 完成功能开发、修复 Bug、准备提交或发起 PR、被要求验证/自检/交付/收尾。SKIP: 仅修改文档、注释或 README，不涉及运行时代码。"
-version: "1.0.2"
+version: "1.0.3"
 author: xiaoyu
 ---
+
+# self-check-trinity
 
 > **生命周期阶段**：稳定
 
@@ -22,6 +24,7 @@ author: xiaoyu
 **校验与诊断命令**：
 - 包管理器探测：可通过运行 `ls pnpm-lock.yaml || ls package-lock.json || ls Cargo.toml || ls pyproject.toml` 等确认项目环境。
 - 可通过执行 `git status` 确认当前有需要验证的代码变更。
+- 运行环境假设为类 Unix 终端（示例命令使用 `ls`、`git`）。
 
 ## 📖 标准工作流
 
@@ -40,7 +43,7 @@ author: xiaoyu
 
 ### 阶段 2：类型 / 编译检查
 
-执行项目对应的类型检查命令。Lint 无法检测出类型错误、缺失的 import、编译失败等问题，必须通过此步骤排查。如果报错涉及第三方 API 改名，可通过技能调用执行 `api-name-drift-defense` 辅助排查。
+执行项目对应的类型检查命令。Lint 无法检测出类型错误、缺失的 import、编译失败等问题，必须通过此步骤排查。如果报错涉及第三方 API 改名，可通过技能调用执行 `api-name-drift-defense` 辅助排查（该技能的回归验证不会级联回调本技能，调用环已显式闭合）。
 
 ### 阶段 3：测试
 

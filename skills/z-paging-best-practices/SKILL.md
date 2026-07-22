@@ -1,7 +1,7 @@
 ---
 name: z-paging-best-practices
 description: "z-paging 分页组件的最佳实践指南，强制使用 fixed 模式 + slot 插槽布局。TRIGGER when: 用户需要在 uni-app 项目中新建分页列表页面、实现下拉刷新/上滑加载、或排查 z-paging 相关布局问题（如导航栏遮挡、底部按钮越界）。SKIP: 非 uni-app 项目，或页面不涉及分页列表。"
-version: "1.0.1"
+version: "1.0.2"
 author: xiaoyu
 ---
 
@@ -9,7 +9,7 @@ author: xiaoyu
 
 > **生命周期阶段**：稳定
 
-本指南假设目标 uni-app 项目已通过 `uni_modules` 引入 z-paging (v2.8.6)，典型路径为 `src/uni_modules/z-paging/`（实际路径以项目为准）。
+本指南假设目标 uni-app 项目已通过 `uni_modules` 引入 z-paging（编写时参考 v2.8.6；**执行前先确认项目实际版本**，API 行为以实际版本为准），典型路径为 `src/uni_modules/z-paging/`（实际路径以项目为准）。
 
 ## 🎯 触发条件
 
@@ -23,8 +23,9 @@ author: xiaoyu
 ## ⚙️ 依赖与先决条件
 
 - uni-app 项目（微信小程序 / H5）。可通过检查项目根目录下是否存在 `manifest.json` 文件（`ls manifest.json`）来确认。
-- `z-paging` v2.8.6。可通过运行 `ls src/uni_modules/` 并查找 `z-paging` 目录，或检查锁文件依赖确认。
+- `z-paging` v2.8+。可通过运行 `ls src/uni_modules/` 并查找 `z-paging` 目录，或检查锁文件确认实际版本号。
 - `uv-ui` 组件库（用于 `uv-navbar` 等 UI 组件）。可通过运行 `ls src/uni_modules/` 并查找 `uv-ui` 确认。
+- 运行环境假设为类 Unix 终端（示例命令使用 `ls`）。
 
 ## 📌 核心概念
 
@@ -94,6 +95,7 @@ z-paging 维护内部 scroll-view，通过 `@query` 回调自动计算 `pageNo` 
 ```ts
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { request } from '@/utils/request'  // 项目请求封装（uniapp-wechat-scaffold 脚手架约定）；项目无封装时替换为等价写法
 
 const paging = ref(null)  // z-paging 实例引用
 
@@ -112,9 +114,10 @@ function queryList(pageNo: number, pageSize: number) {
 
 async function getListData(pageNo: number) {
   try {
-    // 请求方式遵循项目自有封装（如 unicv 脚手架的 @/utils/request），此处仅示意
-    const res = await proxy.$http.post(api.xxx, {
-      pageInfo: { pageNum: pageNo, pageSize: 10 }
+    const res = await request({
+      url: '/api/module/list',
+      method: 'POST',
+      data: { pageInfo: { pageNum: pageNo, pageSize: 10 } }
     })
     if (res.success) {
       // 关键：告知 z-paging 数据及总数

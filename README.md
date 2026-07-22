@@ -30,7 +30,7 @@ git clone <repo-url> ~/.config/opencode/skills/
 | `xy-feat` | 端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证 → 审查收尾），优先调用 superpowers，未安装时降级为内联流程 |
 | `docs-layout-quadrant` | 文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录，支持批量整理历史文档（去日期前缀、冲突仲裁、建立知识索引） |
 | `self-check-trinity` | 强制在交付代码前执行 lint → typecheck → test 三道质量检查 |
-| `unicv` | 基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序脚手架生成器 |
+| `uniapp-wechat-scaffold` | 基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序脚手架生成器 |
 | `unified-api-response` | 强制所有 JSON API 返回统一的 `{ code, message, data }` 响应结构 |
 | `api-name-drift-defense` | 防御第三方库版本升级导致的 API 重命名/移除问题 |
 | `health-probe-discipline` | Node 服务探针端点（health/readiness/liveness）规范约束 |
@@ -53,14 +53,13 @@ skills/
 │   └── tracking/                  # 进度跟踪（超短周期）
 ├── skills/                        # 技能容器目录
 │   ├── xy-feat/                   # 功能开发工作流
-│   ├── unicv/                     # UniApp 脚手架
+│   ├── uniapp-wechat-scaffold/    # UniApp 脚手架
 │   ├── self-check-trinity/        # 三合一质量检查
 │   ├── unified-api-response/      # 统一 API 响应
 │   ├── api-name-drift-defense/    # API 漂移防御
 │   ├── docs-layout-quadrant/      # 文档四象限
 │   ├── health-probe-discipline/   # 探针规范
 │   └── z-paging-best-practices/   # z-paging 分页最佳实践
-├── pack.sh                        # 打包脚本（每技能单独打 zip）
 └── README.md
 ```
 
@@ -71,15 +70,9 @@ skills/
 - **🎯 触发条件** — 何时激活
 - **⚙️ 依赖环境** — 所需工具
 - **📖 核心工作流** — 执行步骤
-- **⛔ 行为限制与护栏** — 安全约束
+- **⛔ 行为护栏** — 安全约束
 - **📝 模板与范例** — 代码参考
 
-### 打包
+### 打包分发
 
-为每个技能单独生成可直接导入 [cc-switch](https://ccswitch.io) 的 zip 包。cc-switch 要求「一个 zip = 一个技能」且 `SKILL.md` 位于 zip 根目录，因此脚本会进入各技能目录再打包：
-
-```bash
-bash pack.sh   # 在 dist/ 下为每个技能生成独立 zip
-```
-
-产物在 `dist/`，到 cc-switch 的「Skills → 从 ZIP 安装」中逐个导入即可。
+> 若需将技能导入 [cc-switch](https://ccswitch.io) 等工具，请手动进入各技能目录打包，确保 `SKILL.md` 位于 zip 根目录，且一个 zip 对应一个技能。

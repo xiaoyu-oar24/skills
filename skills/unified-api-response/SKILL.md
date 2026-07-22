@@ -1,16 +1,18 @@
 ---
 name: unified-api-response
 description: "强制所有 JSON API Handler 返回统一的 code-message-data 响应结构。TRIGGER when: 设计或审查 BFF / REST API、添加新的服务端路由处理器、发现已有 API 返回格式不一致、挂载全局错误兜底插件。SKIP: 流式响应或非 JSON 的 SSR HTML 路由。"
-version: "1.1.1"
+version: "1.1.2"
 author: xiaoyu
 ---
+
+# unified-api-response
 
 > **生命周期阶段**：稳定
 
 ## 🎯 触发条件
 
 - **TRIGGER when**: 设计或审查 REST API，添加新的服务端路由处理器，发现现有 API 返回格式不一致，或挂载全局错误兜底插件时。代码评审中发现用异常抛出来表达正常业务错误路径、或 e2e 测试中断言响应体格式时亦可触发
-- **SKIP**: 流式响应（SSE / WebSocket / 文件下载）或非 JSON 响应（SSR HTML、静态资源）
+- **SKIP**: 流式响应（SSE / WebSocket / 文件下载）或非 JSON 响应（SSR HTML、静态资源）；监控探针端点（如 /api/health、/api/live）保持裸格式，按 `health-probe-discipline` 规范执行，不适用统一封装
 
 ## ⚙️ 依赖与先决条件
 
@@ -28,6 +30,7 @@ author: xiaoyu
 - Node.js 项目：运行 `cat package.json` 确定所含框架。
 - Maven 项目：运行 `cat pom.xml` 或 `mvn dependency:tree` 检查。
 - Python 项目：运行 `cat pyproject.toml` 或 `pip show` 确认依赖。
+- 运行环境假设为类 Unix 终端（示例命令使用 `cat`）；Windows 请改用等价命令。
 
 ## 📖 标准工作流
 

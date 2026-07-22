@@ -1,9 +1,11 @@
 ---
 name: api-name-drift-defense
 description: "防御第三方依赖库在版本升级过程中的 API 重命名、移除或签名变更问题。TRIGGER when: 运行时出现导入或调用报错、之前正常工作的 API 出现类型错误、升级依赖大版本后排查破坏性变更。SKIP: 无关的普通语法错误或纯业务逻辑 Bug。"
-version: "1.1.1"
+version: "1.1.2"
 author: xiaoyu
 ---
+
+# api-name-drift-defense
 
 > **生命周期阶段**：稳定
 
@@ -27,6 +29,8 @@ author: xiaoyu
 | Java | Maven / Gradle | `mvn -v` 或 `gradle -v` |
 | Rust | Cargo | `cargo --version` |
 | Go | go mod | `go version` |
+
+- 运行环境假设为类 Unix 终端（探测命令基于 Unix 工具）；Windows 请改用等价命令。
 
 ## 📖 标准工作流
 
@@ -60,7 +64,7 @@ author: xiaoyu
 
 ### 阶段 3：回归验证
 
-修复后通过技能调用执行 `self-check-trinity`，确保代码通过 Lint、类型/编译检查、测试全部通过
+修复后通过技能调用执行 `self-check-trinity`，确保代码通过 Lint、类型/编译检查、测试全部通过。**调用环边界**：回归验证仅执行一轮；若再次因 API 漂移失败，在当前流程内继续修复调用点，不再级联重新调用本技能，直至通过或累计重试 3 次后停止并向用户汇报。
 
 ## ⛔ 行为护栏
 

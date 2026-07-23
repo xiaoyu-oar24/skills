@@ -27,19 +27,19 @@ git clone <repo-url> ~/.config/opencode/skills/
 
 | 技能 | 描述 |
 |------|------|
-| `xy-feat` | 端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD 执行 → 验证 → 审查收尾），优先调用 superpowers，未安装时降级为内联流程 |
+| `xy-feat` | 端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证 → 审查收尾 → 指南与归档），优先调用 superpowers，未安装时降级为内联流程 |
 | `docs-layout-quadrant` | 文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录，支持批量整理历史文档（去日期前缀、冲突仲裁、建立知识索引） |
 | `self-check-trinity` | 强制在交付代码前执行 lint → typecheck → test 三道质量检查 |
 | `uniapp-wechat-scaffold` | 基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序脚手架生成器 |
 | `unified-api-response` | 强制所有 JSON API 返回统一的 `{ code, message, data }` 响应结构 |
 | `api-name-drift-defense` | 防御第三方库版本升级导致的 API 重命名/移除问题 |
-| `health-probe-discipline` | Node 服务探针端点（health/readiness/liveness）规范约束 |
+| `health-probe-discipline` | 服务探针端点（health/readiness/liveness）规范约束，支持 Node/Java/Python 多技术栈 |
 | `z-paging-best-practices` | z-paging 分页组件的最佳实践指南，包含下拉刷新、上滑加载及布局防踩坑指南 |
 
 ## 目录结构
 
 ```
-skills/
+/
 ├── docs/                          # 规范指南、设计文档（四象限：specs/plan/tracking/guide）
 │   ├── INDEX.md                   # 知识索引导航
 │   ├── guide/                     # 使用指南（长周期）
@@ -48,11 +48,13 @@ skills/
 │   │   └── ...
 │   ├── specs/                     # 设计规范（长周期）
 │   │   ├── 任务边界自律守则.md
+│   │   ├── 技能审计报告-深度综合版.md
+│   │   ├── xy-feat工作流优化方案.md
 │   │   └── ...
 │   ├── plan/                      # 执行计划（短周期）
 │   └── tracking/                  # 进度跟踪（超短周期）
 ├── skills/                        # 技能容器目录
-│   ├── xy-feat/                   # 功能开发工作流
+│   ├── xy-feat/                   # 功能开发工作流 (v5.0.0)
 │   ├── uniapp-wechat-scaffold/    # UniApp 脚手架
 │   ├── self-check-trinity/        # 三合一质量检查
 │   ├── unified-api-response/      # 统一 API 响应
@@ -60,7 +62,9 @@ skills/
 │   ├── docs-layout-quadrant/      # 文档四象限
 │   ├── health-probe-discipline/   # 探针规范
 │   └── z-paging-best-practices/   # z-paging 分页最佳实践
-└── README.md
+├── README.md
+├── CLAUDE.md
+└── AGENTS.md
 ```
 
 ## 开发

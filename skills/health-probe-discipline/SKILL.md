@@ -1,7 +1,7 @@
 ---
 name: health-probe-discipline
 description: "强制执行服务 health/readiness/liveness 探针端点的规范约束。TRIGGER when: 新增或审查探针端点如 /api/health、/api/live、探针误报触发告警、发现探针端点被按 HTTP 动词拆分为多个文件。SKIP: 普通业务功能 API 接口。"
-version: "1.1.2"
+version: "1.1.3"
 author: xiaoyu
 ---
 
@@ -56,6 +56,7 @@ author: xiaoyu
 本地启动服务后，运行以下验证：
 - `curl -s -o /dev/null -w "%{http_code}" -X GET http://localhost:PORT/api/health` → 确认输出 `200`
 - `curl -I http://localhost:PORT/api/health` → 确认 HEAD 请求正常响应（`-I` 即发送 HEAD 请求）
+- `curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:PORT/api/health` → 确认显式拒绝非法动词（输出 `405` 或 `404`/非 200 状态码）
 
 ## ⛔ 行为护栏
 

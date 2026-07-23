@@ -1,7 +1,7 @@
 ---
 name: docs-layout-quadrant
-description: "文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录结构。被 xy-feat 开发工作流在阶段5调用以完成文档合规整理。核心原则：领域主体命名（禁用日期前缀）、象限生命周期管理、知识索引导航。TRIGGER when: 开始新功能需整理文档结构、编写设计文档或进度报告、整理混乱的 docs/ 目录、被 xy-feat 在指南产出阶段（阶段 5）调用。SKIP: 项目根目录的 README.md 或 CLAUDE.md 等全局配置文件。"
-version: "2.2.2"
+description: "文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录结构。被 xy-feat 工作流在阶段6调用以完成文档合规整理。核心原则：领域主体命名（禁用日期前缀）、象限生命周期管理、知识索引导航。TRIGGER when: 开始新功能需整理文档结构、编写设计文档或进度报告、整理混乱的 docs/ 目录、被 xy-feat 在指南产出与收尾归档阶段（阶段 6）调用。SKIP: 项目根目录的 README.md 或 CLAUDE.md 等全局配置文件。"
+version: "2.2.3"
 author: xiaoyu
 ---
 
@@ -18,7 +18,7 @@ author: xiaoyu
   - 用户询问"文档放哪里"或"docs/ 目录怎么组织"
   - 整理混乱的 `docs/` 目录，将散落的文档归类到四象限结构中
   - 检查文档命名是否符合规范（发现日期前缀时强制重构）
-  - 当作为 `xy-feat` 协同开发工作流的第 5 阶段（指南产出与文档合规整理）被调用时
+  - 当作为 `xy-feat` 协同开发工作流的第 6 阶段（指南产出与文档合规整理归档）被调用时
 - **SKIP**: 项目根目录的 `README.md`、`CLAUDE.md` 等全局配置文件
 
 ## ⚙️ 依赖与先决条件
@@ -124,7 +124,7 @@ author: xiaoyu
 - **必须使用相对路径**：文档间互相引用时，必须使用相对路径（`./` 或 `../`），禁止使用任何绝对路径（如 `/Users/xxx/` 开头或完整磁盘路径）
 - **禁止散落文档**：`docs/` 根目录下只能保留 `INDEX.md` 等入口文件，所有功能性文档必须归入四个象限子目录
 - **保护入口文件**：移动和重命名文档时，确保项目根目录的 `README.md` 和 `CLAUDE.md` 不受影响
-- **保留 Git 历史**：移动文件时使用 `git mv` 而非普通 `mv`，保留版本历史
+- **必须使用 `git mv` 保留 Git 历史**：移动文件时必须使用 `git mv` 而非普通 `mv`，以完整保留版本变更历史
 - **索引同步不可跳过**：任何文档增删改后，必须同步更新 `docs/INDEX.md`，保持导航网最新
 - **删除/批量移动前需确认**：任何删除或批量移动、重命名文件的操作，必须先列出受影响文件清单并获得用户确认后方可执行
 
@@ -158,7 +158,7 @@ author: xiaoyu
 - docs/INDEX.md                        ← 知识导航入口
 - docs/specs/gateway-proxy-design.md   ← 随代码演进的长活文档
 - docs/plan/gateway-proxy-plan.md      ← 交付后标记 [DONE]
-- docs/tracking/gateway-proxy.md       ← 验收后归档/删除
+- docs/tracking/gateway-proxy.md       ← 阶段 5 审查通过后在阶段 6 归档至 .archive/
 - docs/guide/gateway-proxy-guide.md    ← 面向开发者的 How-to
 
 相对路径链接：

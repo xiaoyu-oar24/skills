@@ -1,15 +1,14 @@
 ---
 name: z-paging-best-practices
 description: "z-paging 分页组件的最佳实践指南，强制使用 fixed 模式 + slot 插槽布局。TRIGGER when: 用户需要在 uni-app 项目中新建分页列表页面、实现下拉刷新/上滑加载、或排查 z-paging 相关布局问题（如导航栏遮挡、底部按钮越界）。SKIP: 非 uni-app 项目，或页面不涉及分页列表。"
-version: "1.0.2"
+version: "1.0.3"
 author: xiaoyu
 ---
 
 # z-paging 最佳实践
 
 > **生命周期阶段**：稳定
-
-本指南假设目标 uni-app 项目已通过 `uni_modules` 引入 z-paging（编写时参考 v2.8.6；**执行前先确认项目实际版本**，API 行为以实际版本为准），典型路径为 `src/uni_modules/z-paging/`（实际路径以项目为准）。
+> **底层机制**：z-paging 维护内部 scroll-view，通过 `@query` 回调自动计算 `pageNo` 和 `pageSize`。获取数据后调用 `paging.value.completeByTotal(list, total)` 或 `paging.value.complete(list)` 告知组件。默认开启 `fixed` 模式，`position: fixed; top: 0; bottom: 0` 铺满屏幕，内部使用 flex 纵向布局。
 
 ## 🎯 触发条件
 
@@ -23,15 +22,9 @@ author: xiaoyu
 ## ⚙️ 依赖与先决条件
 
 - uni-app 项目（微信小程序 / H5）。可通过检查项目根目录下是否存在 `manifest.json` 文件（`ls manifest.json`）来确认。
-- `z-paging` v2.8+。可通过运行 `ls src/uni_modules/` 并查找 `z-paging` 目录，或检查锁文件确认实际版本号。
+- `z-paging` v2.8+（参考标准为 v2.8.6，执行前先确认项目实际版本）。可通过运行 `ls src/uni_modules/` 并查找 `z-paging` 目录或检查锁文件确认实际版本。
 - `uv-ui` 组件库（用于 `uv-navbar` 等 UI 组件）。可通过运行 `ls src/uni_modules/` 并查找 `uv-ui` 确认。
 - 运行环境假设为类 Unix 终端（示例命令使用 `ls`）。
-
-## 📌 核心概念
-
-z-paging 维护内部 scroll-view，通过 `@query` 回调自动计算 `pageNo` 和 `pageSize`。获取数据后调用 `paging.value.completeByTotal(list, total)` 或 `paging.value.complete(list)` 告知组件。
-
-组件默认开启 `fixed` 模式，`position: fixed; top: 0; bottom: 0` 铺满屏幕，内部使用 flex 纵向布局。
 
 ## 📖 标准工作流
 
@@ -136,7 +129,7 @@ function reloadList() {
 }
 ```
 
-### 阶段 3：理解 — 布局原理
+### 阶段 3：布局原理与防踩坑
 
 z-paging `fixed` 模式 CSS 类 `.z-paging-content-fixed`：`position: fixed; top: 0; left: 0; bottom: 0; right: 0;`，内部 flex 纵向布局：
 
@@ -157,7 +150,9 @@ z-paging `fixed` 模式 CSS 类 `.z-paging-content-fixed`：`position: fixed; to
 └──────────────────────────────────────────────┘
 ```
 
-**关键**：`slot="top"` / `slot="bottom"` 内的元素会作为 flex 子项参与布局，自动占据空间，scroll-view 的 `flex: 1` 填充剩余区域。无需任何手动高度计算。
+- **导航栏遮挡列表**：检查 `#top` 中的 navbar 是否遗漏 `:fixed="false"`。
+- **下拉刷新/上滑加载不触发**：检查 `paging.value.completeByTotal()` 或 `paging.value.complete([])` 是否正确调用。
+- **弹窗/浮层被遮挡**：弹窗必须放在 `<z-paging>` 标签**外部**。
 
 ## ⛔ 行为护栏
 
@@ -225,26 +220,3 @@ z-paging `fixed` 模式 CSS 类 `.z-paging-content-fixed`：`position: fixed; to
   </view>
 </template>
 ```
-
----
-
-## 常见问题排查
-
-### 导航栏遮挡列表内容
-
-- **fixed 模式**：检查 `#top` 中的 navbar 是否遗漏 `:fixed="false"`
-- **非 fixed 模式（旧方案）**：检查 `pagingStyle.paddingTop` 是否等于 `navBarHeight`（`44 + statusBarHeight`）
-
-### 下拉刷新/上滑加载不触发
-
-- 检查 `paging.value.completeByTotal()` 是否被正确调用
-- 数据为空时改用 `paging.value.complete([])`，不会触发加载更多
-- `:auto="false"` 会阻止初始加载
-
-### 弹窗/浮层被遮挡
-
-- 弹窗放在 `<z-paging>` 标签**外部**（如 `<uv-popup>` 的 z-index 才能正确生效）
-
-### 底部安全区域
-
-- 使用 `:safe-area-inset-bottom="true"` 让 z-paging 自动处理

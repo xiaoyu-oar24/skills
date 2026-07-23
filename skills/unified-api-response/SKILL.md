@@ -1,7 +1,7 @@
 ---
 name: unified-api-response
 description: "强制所有 JSON API Handler 返回统一的 code-message-data 响应结构。TRIGGER when: 设计或审查 BFF / REST API、添加新的服务端路由处理器、发现已有 API 返回格式不一致、挂载全局错误兜底插件。SKIP: 流式响应或非 JSON 的 SSR HTML 路由。"
-version: "1.1.2"
+version: "1.1.3"
 author: xiaoyu
 ---
 
@@ -82,13 +82,13 @@ export default defineEventHandler((event) => {
 ```
 
 ```java
-// 错误：业务异常直接抛，响应格式不统一
+// 错误：直接返回裸对象 User，未用 ApiResult 统一封装，且用抛出异常表示普通业务逻辑中断
 // Spring Boot 示例
 @GetMapping("/user/{id}")
 public User getUser(@PathVariable Long id) {
     User user = userService.findById(id);
     if (user == null) throw new RuntimeException("用户不存在");
-    return user;  // 直接返回裸对象
+    return user;  // 直接返回裸对象 User，未用 ApiResult 统一封装
 }
 ```
 

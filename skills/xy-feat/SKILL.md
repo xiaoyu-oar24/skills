@@ -1,13 +1,13 @@
 ---
 name: xy-feat
 description: "端到端功能开发工作流（需求澄清、方案设计、规划分解、TDD/VDD 执行、验证、代码审查收尾、指南与合规整理）。优先调用 superpowers 技能链，未安装时按需降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发。"
-version: "5.0.0"
+version: "5.1.0"
 author: xiaoyu
 ---
 
 # xy-feat 工作流
 
-> **生命周期阶段**：稳定 (v5.0.0)
+> **生命周期阶段**：稳定 (v5.1.0)
 > **定位**：将 **需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证完成 → 审查收尾 → 指南与归档** 串成一条端到端流水线。
 > **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**；若 superpowers 未安装（技能调用返回不可用），则按需读取 `references/` 下的对应降级文件执行内联流程（对应关系见"Superpowers 技能依赖"表）。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
@@ -38,7 +38,7 @@ author: xiaoyu
 | `verification-before-completion` | 阶段 4 | 阶段必选 | 读取 `references/fallback-verify-finish.md` 执行内联校验 |
 | `requesting-code-review` | 阶段 5 | 推荐 | 读取 `references/fallback-verify-finish.md` 执行内联审查（代码归档前审查） |
 | `finishing-a-development-branch` | 阶段 5 | 推荐 | 读取 `references/fallback-verify-finish.md` 执行内联收尾（含 Git Diff 测试去重） |
-| `docs-layout-quadrant` | 阶段 6 | 阶段必选 | 本地技能，负责使用指南产出、四象限整理与 tracking 归档 |
+| `docs-layout-quadrant` | 阶段 6 | 阶段必选 | 本地技能，负责使用指南产出、四象限整理、收尾归档与规则文件注入 |
 | `using-git-worktrees` | 阶段 0 | 可选 | 读取 `references/fallback-init-design.md` 执行内联隔离策略 |
 
 ### 本地技能依赖
@@ -48,7 +48,7 @@ author: xiaoyu
 | 技能 | 阶段 | 角色 |
 | :--- | :--- | :--- |
 | `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test 三道质量关卡 |
-| `docs-layout-quadrant` | 阶段 6 | 使用指南产出与文档合规整理、已验收 tracking 归档 |
+| `docs-layout-quadrant` | 阶段 6 | 使用指南产出、文档合规整理与归档、规则文件注入（AGENTS.md/CLAUDE.md） |
 
 - **工具授权**：用户调用本工作流即视为明确授权进行文件读写、目录创建。
 
@@ -66,7 +66,7 @@ author: xiaoyu
 
 - `<功能名>` 使用英文 kebab-case 或简明中文，描述功能模块本身，**不含日期**。
 - 同一功能的四象限文档共享相同的 `<功能名>` 前缀。
-- **活文档策略**：若同名文档已存在，优先**原地更新**（文档随代码演进）。若必须保留旧版，将旧版追加 `-archived` 后缀后移入对应 `.archive/` 子目录，保持主文件名不变。
+- **活文档策略**：若同名文档已存在，优先**原地更新**（文档随代码演进）。若必须保留旧版，将旧版追加 `-archived` 后缀后移入统一归档目录 `docs/.archive/{象限}/`，保持主文件名不变。
 
 ## 📖 标准工作流
 
@@ -88,7 +88,7 @@ author: xiaoyu
    若 docs/specs/<功能名>-design.md 已存在：
      默认行为：原地更新该文档（活文档理念，文档随代码演进）
      若用户明确要求保留旧版：
-       1. 将旧文件重命名为 <功能名>-archived.md，移入 docs/specs/.archive/
+       1. 将旧文件重命名为 <功能名>-archived.md，移入 docs/.archive/specs/
        2. 新版本使用原始名称 <功能名>-design.md
    ```
 
@@ -209,9 +209,10 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 2. 通过技能调用 `docs-layout-quadrant` 完成文档合规整理与收尾归档，覆盖：
    - 命名规范校验（无日期前缀）
    - 四象限归类
-   - **象限生命周期管理**：将 `docs/plan/<功能名>-plan.md` 标记 `[DONE]`，将已验收的 `docs/tracking/<功能名>.md` 移入 `docs/tracking/.archive/` 目录
+   - **象限生命周期管理**：将已交付的 `docs/plan/<功能名>-plan.md` 追加 `-archived` 后缀移入 `docs/.archive/plan/`；将已验收的 `docs/tracking/<功能名>.md` 按价值决策处理（含设计讨论/决策记录 → 追加 `-archived` 移入 `docs/.archive/tracking/`；纯勾选清单 → 经用户确认后删除）
    - `docs/INDEX.md` 索引更新
    - 相对路径校验与残留验证
+   - **规则文件注入**：向项目根目录 `AGENTS.md` / `CLAUDE.md` 注入 docs 目录结构说明标记块（已存在则更新块内内容，文件不存在则跳过）
 
 ---
 
@@ -219,7 +220,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 - **🚫 禁止日期前缀**：所有产出文档必须使用领域主体命名（`<功能名>-design.md`），**禁止** `YYYY-MM-DD-<功能名>-design.md` 格式。文档是知识图谱，不是流水账。
 - **阶段不可跳跃**：默认必须按 0→1→2→3→4→5→6 顺序执行。必须先审查收尾(阶段 5)后再归档文档(阶段 6)。若用户要求跳过某阶段，需明确告知风险并获得确认后方可跳过。
-- **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入对应 `.archive/`，**禁止**自动追加 `-v2`/`-v3` 后缀。
+- **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入 `docs/.archive/{象限}/`，**禁止**自动追加 `-v2`/`-v3` 后缀。
 - **Git 写操作需授权**：`git add`/`git commit`/`git push`/`git reset`/`git checkout --` 等写操作必须先获得用户授权（阶段 2 计划送审时可批量预授权阶段 3 本地原子提交）；未授权时禁止自动操作。
 - **证据优先与强校验**：阶段 4 的验证必须有新鲜命令输出为凭，阶段 5 的审查必须有 diff 结果为凭，禁止空口断言或信任过时缓存。
 
@@ -238,8 +239,8 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ```markdown
 # 领域主体命名 + 四象限（活文档）
 docs/specs/file-upload-design.md      ← 原地更新，随代码演进的长周期文档
-docs/plan/file-upload-plan.md         ← 阶段 5 审查通过后在阶段 6 标记 [DONE]
-docs/tracking/file-upload.md          ← 阶段 5 审查通过后在阶段 6 归档至 .archive/
+docs/plan/file-upload-plan.md         ← 阶段 5 审查通过后在阶段 6 追加 -archived 归档至 docs/.archive/plan/
+docs/tracking/file-upload.md          ← 阶段 5 审查通过后在阶段 6 归档至 docs/.archive/tracking/ 或删除
 docs/guide/file-upload-guide.md       ← 面向开发者的 How-to
 ```
 
@@ -259,6 +260,9 @@ docs/guide/file-upload-guide.md       ← 面向开发者的 How-to
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v5.1.0** (2026-07-23):
+  - **归档方案统一**：specs/plan/tracking 旧版统一追加 `-archived` 后缀并移入 `docs/.archive/{象限}/`，废弃 `[DONE]` 标记与象限内 `.archive/` 子目录方案，与 docs-layout-quadrant v2.3.0 对齐。
+  - **规则文件注入并入阶段 6**：docs-layout-quadrant 的规则文件注入（向 AGENTS.md/CLAUDE.md 注入 docs 结构说明标记块）明确为阶段 6 职责，xy-feat 不新增独立阶段。
 - **v5.0.0** (2026-07-23):
   - **打破逻辑死锁**：交换阶段 5 与阶段 6 顺序，调整为`验证 → 审查收尾(阶段 5) → 指南产出与归档(阶段 6)`，彻底解决 CR 子代理找不到已归档文件的死锁问题。
   - **TDD 逃生通道**：增加 VDD (Validation-Driven Development) 模式判定，解决纯 UI/CSS、配置文件和无单测场景下的流程死锁。

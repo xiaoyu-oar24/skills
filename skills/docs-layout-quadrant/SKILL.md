@@ -1,7 +1,7 @@
 ---
 name: docs-layout-quadrant
-description: "文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录结构。被 xy-feat 工作流在阶段6调用以完成文档合规整理。核心原则：领域主体命名（禁用日期前缀）、象限生命周期管理、知识索引导航。TRIGGER when: 开始新功能需整理文档结构、编写设计文档或进度报告、整理混乱的 docs/ 目录、被 xy-feat 在指南产出与收尾归档阶段（阶段 6）调用。SKIP: 项目根目录的 README.md 或 CLAUDE.md 等全局配置文件。"
-version: "2.2.3"
+description: "文档四象限布局（specs / plan / tracking / guide），规整 docs/ 目录结构并向 AGENTS.md/CLAUDE.md 注入目录结构说明。被 xy-feat 工作流在指南产出与文档合规整理阶段（阶段 6）调用。核心原则：领域主体命名（禁用日期前缀）、象限生命周期管理、知识索引导航、统一归档目录。TRIGGER when: 开始新功能需整理文档结构、编写设计文档或进度报告、整理混乱的 docs/ 目录、向规则文件注入或更新 docs 结构说明标记块、被 xy-feat 在指南产出与文档合规整理阶段（阶段 6）调用。SKIP: 对项目根目录 README.md 或 CLAUDE.md 等全局配置文件的归类整理（注意：向 CLAUDE.md / AGENTS.md 注入或更新 docs 结构标记块不在 SKIP 范围内）。"
+version: "2.3.0"
 author: xiaoyu
 ---
 
@@ -18,8 +18,9 @@ author: xiaoyu
   - 用户询问"文档放哪里"或"docs/ 目录怎么组织"
   - 整理混乱的 `docs/` 目录，将散落的文档归类到四象限结构中
   - 检查文档命名是否符合规范（发现日期前缀时强制重构）
-  - 当作为 `xy-feat` 协同开发工作流的第 6 阶段（指南产出与文档合规整理归档）被调用时
-- **SKIP**: 项目根目录的 `README.md`、`CLAUDE.md` 等全局配置文件
+  - 向 `AGENTS.md` / `CLAUDE.md` 注入或更新 docs 目录结构说明标记块时
+  - 当作为 `xy-feat` 协同开发工作流的指南产出与文档合规整理阶段（阶段 6，含规则文件注入）被调用时
+- **SKIP**: 对项目根目录 `README.md`、`CLAUDE.md` 等全局配置文件的归类整理（注意：向 `CLAUDE.md` / `AGENTS.md` 注入或更新 docs 结构标记块不在 SKIP 范围内）
 
 ## ⚙️ 依赖与先决条件
 
@@ -45,13 +46,13 @@ author: xiaoyu
 
 1. **识别冲突**：去日期前缀后，检测是否有 2+ 个文件映射到同一目标名
 2. **选主版本**：按日期从文件名中提取并比较，**保留最新日期**的那个作为主版本（使用目标名）
-3. **归档旧版**：较旧的版本追加 `-archived` 后缀，移入对应象限的 `.archive/` 子目录：
+3. **归档旧版**：较旧的版本追加 `-archived` 后缀，移入统一归档目录 `docs/.archive/{象限}/`：
    ```
-   docs/specs/网关设计.md                    ← 最新版（2026-07-20 的内容）
-   docs/specs/.archive/网关设计-archived.md  ← 旧版（2026-07-15 的内容）
+   docs/specs/网关设计.md                       ← 最新版（2026-07-20 的内容）
+   docs/.archive/specs/网关设计-archived.md     ← 旧版（2026-07-15 的内容）
    ```
 4. **版本合并提示**：冲突解决后，向用户报告：
-   > "发现 N 个同名文档的多个日期版本，已保留最新版 `网关设计.md`，旧版已归档至 `.archive/`。请确认是否需要将旧版中的独有内容合并到新版中。"
+   > "发现 N 个同名文档的多个日期版本，已保留最新版 `网关设计.md`，旧版已归档至 `docs/.archive/`。请确认是否需要将旧版中的独有内容合并到新版中。"
 5. 若文件名中无日期可比较（如 `网关设计.md` 和 `网关设计-v2.md` 同时存在），优先保留无后缀版本，将 `-v2` 版归档
 
 ### 阶段 2：四象限归类
@@ -63,8 +64,8 @@ author: xiaoyu
 | 象限 | 路径 | 定位 | 生命周期 |
 | :--- | :--- | :--- | :--- |
 | 设计规范 | `docs/specs/` | 需求分析与架构决策（ADR），系统的"宪法"，记录 Why | **长周期** |
-| 执行计划 | `docs/plan/` | 实施计划与任务拆解，开发前的 Draft | **短周期** — Feature 交付后标记 `[DONE]` 或废弃 |
-| 进度跟踪 | `docs/tracking/` | 任务 Checklist | **超短周期** — 任务验收后归档到 `.archive/` 或删除 |
+| 执行计划 | `docs/plan/` | 实施计划与任务拆解，开发前的 Draft | **短周期** — Feature 交付后追加 `-archived` 并归档至 `docs/.archive/plan/` |
+| 进度跟踪 | `docs/tracking/` | 任务 Checklist | **超短周期** — 任务验收后归档至 `docs/.archive/tracking/` 或删除 |
 | 使用指南 | `docs/guide/` | 面向开发者的 How-to 操作手册 | **长周期** |
 
 ### 阶段 3：象限生命周期管理
@@ -74,10 +75,12 @@ author: xiaoyu
 对已有文档执行过期清理：
 
 1. **plan/** — 扫描已完成功能的 plan 文档：
-   - 已交付 → 文件名追加 `-done` 后缀，或移入 `docs/plan/.archive/`
+   - 已交付 → 追加 `-archived` 后缀，移入 `docs/.archive/plan/`
    - AI 不应再将已完成的 plan 作为系统现状参考源
 2. **tracking/** — 扫描已验收的追踪文档：
-   - 任务全部完成 → 移入 `docs/tracking/.archive/`；如需直接删除，必须先向用户说明并获得确认
+   - 任务全部完成 → 按以下决策树处理：
+     - 包含设计讨论/决策记录 → 移入 `docs/.archive/tracking/`
+     - 纯勾选框清单，无讨论价值 → 直接删除（需先向用户说明并获得确认）
    - **代码库不该存储执行状态**，Git 历史已足够
 3. **specs/ & guide/** — 作为长周期文档，保持原位，但检查内容是否过时
 
@@ -97,15 +100,21 @@ author: xiaoyu
 | :--- | :--- | :--- |
 | 网关代理转发设计 | specs | [gateway-proxy-design.md](specs/gateway-proxy-design.md) |
 | 网关使用指南 | guide | [gateway-proxy-guide.md](guide/gateway-proxy-guide.md) |
+
+## 📦 归档文档
+> 仅列出仍有参考价值的归档文档（如被替代的旧版设计），纯 tracking 清单不列入。
+| 文档 | 原象限 | 归档原因 | 文件 |
+| :--- | :--- | :--- | :--- |
+| 网关设计 v1 | specs | 被 v2 替代 | [.archive/specs/网关设计-archived.md](.archive/specs/网关设计-archived.md) |
 ```
 
-每次新增/删除/重命名文档后，**必须同步更新** `docs/INDEX.md`。
+每次新增/删除/重命名文档后，**必须同步更新** `docs/INDEX.md`。归档文档移入 `docs/.archive/` 时，若有参考价值也需在 INDEX 的"📦 归档文档"小节中体现。
 
 ### 阶段 5：移动文件与修复链接
 
 **使用工具**：命令行/终端（如 `git mv`）、文本搜索、编辑文件
 
-1. 使用 `git mv <旧路径> <新路径>` 移动文件（保留 Git 历史）
+1. 使用 `git mv <旧路径> <新路径>` 移动文件（保留 Git 历史）；若 `docs/` 未被 Git 跟踪（如被 `.gitignore` 忽略），退化为普通 `mv` 并向用户说明
 2. 搜索文档中引用了旧路径的链接，逐个修正为新的相对路径
 3. 所有文档间链接必须使用相对路径（如 `../specs/xxx.md`），**禁止**使用绝对路径
 
@@ -118,13 +127,56 @@ author: xiaoyu
 - 日期前缀残留（`20[0-9]{2}-[0-9]{2}-[0-9]{2}-.*\.md`）→ 确认已全部重命名
 - INDEX.md 中的链接 → 确认全部可访问
 
+### 阶段 7：向项目规则文件注入 docs 结构说明
+
+**使用工具**：读取文件、写入文件
+
+检查项目根目录是否存在 `AGENTS.md` 和/或 `CLAUDE.md`，向其中追加标准化的 docs 目录结构说明段落，帮助 AI 助手在后续会话中理解文档组织规范。
+
+**注入策略与授权**：
+1. 读取目标文件，按前缀匹配检查是否已包含 `<!-- docs-layout-quadrant:start` 标记（标记尾部带版本号，如 `(v2.3)`）
+2. 若已存在 → 替换整个标记块（含同步刷新 `start` 标记行中的版本号后缀为最新 `(vX.Y)`），标记块在文件中的位置保持不动
+3. 若不存在 → 在文件末尾追加标准化段落
+4. **确认要求**：独立调用本技能时，修改规则文件前需先向用户简要说明要写入/更新的标记块内容；在 `xy-feat` 工作流上下文中，用户调用 `/xy-feat` 视为预授权规则文件标记块的标准化注入与更新
+
+**注入内容模板**：
+
+```markdown
+<!-- docs-layout-quadrant:start (v2.3) -->
+## 📁 docs/ 目录结构
+
+本项目采用四象限文档布局，由 `docs-layout-quadrant` 技能维护。AI 助手在读取/创建/修改文档时请遵循此结构。
+
+| 目录 | 用途 | 存放规则 |
+| :--- | :--- | :--- |
+| `docs/specs/` | 设计规范与架构决策（ADR），记录 Why | 长周期，随代码演进持续更新 |
+| `docs/plan/` | 实施计划与任务拆解 | 短周期，交付后归档至 `docs/.archive/plan/` |
+| `docs/tracking/` | 任务进度追踪清单 | 超短周期，验收后归档或删除 |
+| `docs/guide/` | 面向开发者的 How-to 操作手册 | 长周期，随功能迭代更新 |
+| `docs/.archive/` | 统一归档目录 | 历史版本、已完成计划、废弃文档 |
+| `docs/INDEX.md` | 知识导航入口 | 新增/删除/重命名文档后必须同步更新 |
+
+### 命名规范
+- **禁止日期前缀**：文件名使用领域主体命名（如 `gateway-proxy-design.md`），不使用 `2026-07-15-xxx.md`
+- 文档间引用使用相对路径（如 `../specs/xxx.md`），禁止绝对路径
+- 归档文件统一追加 `-archived` 后缀，移入 `docs/.archive/{象限}/`
+<!-- docs-layout-quadrant:end -->
+```
+
+**注意事项**：
+- 不改动标记块之外的任何已有内容；首次注入时在文件末尾追加，更新时已存在的标记块（连同 `start` 标记行上的版本号）整体替换
+- 若目标文件不存在，跳过该文件（不强制创建 AGENTS.md / CLAUDE.md）
+- 标记中的版本号取技能 version 的主.次版本号（如 `2.3.0` → `v2.3`），用于后续版本升级时定位和替换，不要手动删除标记注释
+
 ## ⛔ 行为护栏
 
 - **🚫 禁止日期前缀**：文件名不得以日期开头。发现时必须重命名并修复引用。文档是知识图谱，不是流水账。
 - **必须使用相对路径**：文档间互相引用时，必须使用相对路径（`./` 或 `../`），禁止使用任何绝对路径（如 `/Users/xxx/` 开头或完整磁盘路径）
 - **禁止散落文档**：`docs/` 根目录下只能保留 `INDEX.md` 等入口文件，所有功能性文档必须归入四个象限子目录
-- **保护入口文件**：移动和重命名文档时，确保项目根目录的 `README.md` 和 `CLAUDE.md` 不受影响
-- **必须使用 `git mv` 保留 Git 历史**：移动文件时必须使用 `git mv` 而非普通 `mv`，以完整保留版本变更历史
+- **保护入口文件**：移动和重命名文档时，确保项目根目录的 `README.md` 不受影响。`AGENTS.md` / `CLAUDE.md` 仅由阶段 7 通过标记块方式修改，其他阶段不得编辑
+- **规则文件注入标记不可损坏**：阶段 7 注入的 `<!-- docs-layout-quadrant:start (vX.Y) -->` / `<!-- docs-layout-quadrant:end -->` 标记用于版本升级时定位和替换，任何其他操作不得删除或修改这两个标记之间的内容
+- **规则文件注入须有授权**：阶段 7 修改 `AGENTS.md` / `CLAUDE.md` 前需向用户说明（在 `/xy-feat` 工作流下视作预授权）
+- **必须使用 `git mv` 保留 Git 历史**：移动已被 Git 跟踪的文件时必须使用 `git mv` 而非普通 `mv`，以完整保留版本变更历史；未跟踪文件（如 `docs/` 被 `.gitignore` 忽略时）退化为普通 `mv` 并向用户说明
 - **索引同步不可跳过**：任何文档增删改后，必须同步更新 `docs/INDEX.md`，保持导航网最新
 - **删除/批量移动前需确认**：任何删除或批量移动、重命名文件的操作，必须先列出受影响文件清单并获得用户确认后方可执行
 
@@ -157,9 +209,10 @@ author: xiaoyu
 规范的四象限组织：
 - docs/INDEX.md                        ← 知识导航入口
 - docs/specs/gateway-proxy-design.md   ← 随代码演进的长活文档
-- docs/plan/gateway-proxy-plan.md      ← 交付后标记 [DONE]
-- docs/tracking/gateway-proxy.md       ← 阶段 5 审查通过后在阶段 6 归档至 .archive/
+- docs/plan/gateway-proxy-plan.md      ← 交付后追加 -archived 并归档至 docs/.archive/plan/
+- docs/tracking/gateway-proxy.md       ← 验收后归档或删除
 - docs/guide/gateway-proxy-guide.md    ← 面向开发者的 How-to
+- docs/.archive/                       ← 统一归档目录
 
 相对路径链接：
 [详细设计](../specs/gateway-proxy-design.md)
@@ -171,3 +224,11 @@ INDEX.md 导航：
 | 设计规范 | specs | [gateway-proxy-design.md](specs/gateway-proxy-design.md) |
 | 使用指南 | guide | [gateway-proxy-guide.md](guide/gateway-proxy-guide.md) |
 ```
+
+## 📜 版本变更历史 (Changelog)
+
+- **v2.3.0** (2026-07-23):
+  - **统一归档目录**：弃用各象限内部 `.archive/` 及 `[DONE]` 标记方案，统一采用 `docs/.archive/{象限}/` 统一归档目录。
+  - **阶段 7 规则注入**：新增向 `AGENTS.md` / `CLAUDE.md` 注入与原地更新 `docs/` 目录结构说明标记块功能（支持版本号自动同步刷新与授权防误触）。
+- **v2.2.3** (2026-07-23):
+  - 完善四象限文档规则与 `xy-feat` 协同约定。

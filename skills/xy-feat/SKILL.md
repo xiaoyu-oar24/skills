@@ -1,13 +1,13 @@
 ---
 name: xy-feat
 description: "端到端功能开发工作流（需求澄清、方案设计、规划分解、TDD/VDD 执行、验证、代码审查收尾、指南与合规整理）。优先调用 superpowers 技能链，未安装时按需降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发。"
-version: "5.1.0"
+version: "5.2.0"
 author: xiaoyu
 ---
 
-# xy-feat 工作流
+# xy-feat
 
-> **生命周期阶段**：稳定 (v5.1.0)
+> **生命周期阶段**：稳定 (v5.2.0)
 > **定位**：将 **需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证完成 → 审查收尾 → 指南与归档** 串成一条端到端流水线。
 > **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**；若 superpowers 未安装（技能调用返回不可用），则按需读取 `references/` 下的对应降级文件执行内联流程（对应关系见"Superpowers 技能依赖"表）。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
@@ -38,7 +38,7 @@ author: xiaoyu
 | `verification-before-completion` | 阶段 4 | 阶段必选 | 读取 `references/fallback-verify-finish.md` 执行内联校验 |
 | `requesting-code-review` | 阶段 5 | 推荐 | 读取 `references/fallback-verify-finish.md` 执行内联审查（代码归档前审查） |
 | `finishing-a-development-branch` | 阶段 5 | 推荐 | 读取 `references/fallback-verify-finish.md` 执行内联收尾（含 Git Diff 测试去重） |
-| `docs-layout-quadrant` | 阶段 6 | 阶段必选 | 本地技能，负责使用指南产出、四象限整理、收尾归档与规则文件注入 |
+| `docs-layout-quadrant` | 阶段 6 | 阶段必选 | 本地技能，负责使用指南产出、五维整理、收尾归档与规则文件注入 |
 | `using-git-worktrees` | 阶段 0 | 可选 | 读取 `references/fallback-init-design.md` 执行内联隔离策略 |
 
 ### 本地技能依赖
@@ -48,7 +48,7 @@ author: xiaoyu
 | 技能 | 阶段 | 角色 |
 | :--- | :--- | :--- |
 | `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test 三道质量关卡 |
-| `docs-layout-quadrant` | 阶段 6 | 使用指南产出、文档合规整理与归档、规则文件注入（AGENTS.md/CLAUDE.md） |
+| `docs-layout-quadrant` | 阶段 6 | 使用指南产出、文档合规整理与归档、规则文件注入（AGENTS.md/CLAUDE.md）— 含弹性降级决策树 |
 
 - **工具授权**：用户调用本工作流即视为明确授权进行文件读写、目录创建。
 
@@ -57,15 +57,16 @@ author: xiaoyu
 > **核心原则**：文档是知识图谱，不是 Git Commit 历史。文件名仅描述模块/领域，**禁止任何日期/时间戳前缀**。
 > 详细规范定义在 `skills/docs-layout-quadrant/SKILL.md`，此处列出本工作流直接使用的约定：
 
-| 象限 | 路径 | 命名模式 | 示例 |
-| :--- | :--- | :--- | :--- |
-| 设计规范 | `docs/specs/` | `<功能名>-design.md` | `gateway-proxy-design.md` |
-| 执行计划 | `docs/plan/` | `<功能名>-plan.md` | `gateway-proxy-plan.md` |
-| 进度跟踪 | `docs/tracking/` | `<功能名>.md` | `gateway-proxy.md` |
-| 使用指南 | `docs/guide/` | `<功能名>-guide.md` | `gateway-proxy-guide.md` |
+| 象限 | 路径 | 命名模式 | 示例 | 说明/约束 |
+| :--- | :--- | :--- | :--- | :--- |
+| 需求文档 | `docs/reqs/` | `<功能名>-req.md` | `gateway-proxy-req.md` | 按决策树判定 |
+| 设计规范 | `docs/specs/` | `<功能名>-design.md` | `gateway-proxy-design.md` | 核心必选 |
+| 执行计划 | `docs/plan/` | `<功能名>-plan.md` | `gateway-proxy-plan.md` | 核心必选 |
+| 进度跟踪 | `docs/tracking/` | `<功能名>.md` | `gateway-proxy.md` | xy-feat 上下文中强制必选 |
+| 使用指南 | `docs/guide/` | `<功能名>-guide.md` | `gateway-proxy-guide.md` | 核心必选 |
 
 - `<功能名>` 使用英文 kebab-case 或简明中文，描述功能模块本身，**不含日期**。
-- 同一功能的四象限文档共享相同的 `<功能名>` 前缀。
+- 同一功能的五维文档共享相同的 `<功能名>` 前缀。
 - **活文档策略**：若同名文档已存在，优先**原地更新**（文档随代码演进）。若必须保留旧版，将旧版追加 `-archived` 后缀后移入统一归档目录 `docs/.archive/{象限}/`，保持主文件名不变。
 
 ## 📖 标准工作流
@@ -81,7 +82,7 @@ author: xiaoyu
 
 1. **需求确认**：若用户输入为空或不清晰，向用户提问："你要做什么功能？"
 2. **功能名确定**：从需求中提炼出 `<功能名>`（kebab-case 或简明中文），用于全流程文档命名。提炼结果**必须经用户确认**（或用户明确授权自动定名）后方可使用。
-3. **目录准备**：确保 `docs/specs`、`docs/plan`、`docs/tracking`、`docs/guide` 四个目录存在（`mkdir -p`）。
+3. **目录准备**：确保 `docs/specs`、`docs/plan`、`docs/guide` 三个核心目录及 `docs/tracking` 强约束目录存在（`mkdir -p docs/specs docs/plan docs/guide docs/tracking`）。`docs/tracking/` **在 `/xy-feat` 上下文强制创建**（保障阶段 3 多 Agent 并发安全）；`docs/reqs/` 按决策树判定（见 `docs-layout-quadrant` 阶段 2）。
 4. **冲突检测（活文档策略）**：
 
    ```
@@ -109,6 +110,8 @@ author: xiaoyu
 
 **必须产出**：`docs/specs/<功能名>-design.md`（背景、方案选择理由、架构设计、接口定义、数据模型、测试策略）。
 
+> **reqs/ 内联降级**：若经决策树判定（纯技术重构/优化）跳过独立 `reqs/`，必须在 design.md 头部包含【`## 1. 需求背景与改造目标`】章节作为降级替代（模板见 `docs-layout-quadrant` 范例）。
+
 **阶段出口**：设计文档完成自审（无占位符、内部一致、范围聚焦、无歧义）并获用户批准。
 
 ---
@@ -122,7 +125,7 @@ author: xiaoyu
 
 **必须产出**：
 - `docs/plan/<功能名>-plan.md`：任务拆解到 2-5 分钟粒度，每个任务卡片含 Files / Interfaces / Steps / Expected，**禁止 TBD/TODO**。
-- `docs/tracking/<功能名>.md`：初始化全部任务卡片状态为 `⏳`（格式模板见 `references/fallback-plan.md`）。
+- `docs/tracking/<功能名>.md`：**在 `/xy-feat` 上下文强制创建**，初始化全部任务卡片状态为 `⏳`（格式模板见 `references/fallback-plan.md`）。`tracking/` 的强制创建保障阶段 3 多 Agent 并发写入安全（子代理禁写、主编排代理集中更新）。
 
 **阶段出口**：规划自审通过（Spec 全覆盖、无占位符、跨任务类型/签名一致）并获用户确认。在送审时声明：“批准本计划即授权 AI 在阶段 3 执行本地 Git 原子提交 (`git commit -m ...`)”。
 
@@ -208,8 +211,8 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 2. 通过技能调用 `docs-layout-quadrant` 完成文档合规整理与收尾归档，覆盖：
    - 命名规范校验（无日期前缀）
-   - 四象限归类
-   - **象限生命周期管理**：将已交付的 `docs/plan/<功能名>-plan.md` 追加 `-archived` 后缀移入 `docs/.archive/plan/`；将已验收的 `docs/tracking/<功能名>.md` 按价值决策处理（含设计讨论/决策记录 → 追加 `-archived` 移入 `docs/.archive/tracking/`；纯勾选清单 → 经用户确认后删除）
+   - 五维归类（含弹性降级决策树判定）
+   - **象限生命周期管理**：将已交付的 `docs/plan/<功能名>-plan.md` 追加 `-archived` 后缀移入 `docs/.archive/plan/`（若含内联 Checklist 则整体归档）；将已验收的 `docs/tracking/<功能名>.md` 按价值决策处理（含设计讨论/决策记录 → 追加 `-archived` 移入 `docs/.archive/tracking/`；纯勾选清单 → 经用户确认后删除）
    - `docs/INDEX.md` 索引更新
    - 相对路径校验与残留验证
    - **规则文件注入**：向项目根目录 `AGENTS.md` / `CLAUDE.md` 注入 docs 目录结构说明标记块（已存在则更新块内内容，文件不存在则跳过）
@@ -237,7 +240,8 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 ### <Good>
 
 ```markdown
-# 领域主体命名 + 四象限（活文档）
+# 领域主体命名 + 五维（活文档）
+docs/reqs/file-upload-req.md           ← 需求文档，验收后冻结保留
 docs/specs/file-upload-design.md      ← 原地更新，随代码演进的长周期文档
 docs/plan/file-upload-plan.md         ← 阶段 5 审查通过后在阶段 6 追加 -archived 归档至 docs/.archive/plan/
 docs/tracking/file-upload.md          ← 阶段 5 审查通过后在阶段 6 归档至 docs/.archive/tracking/ 或删除
@@ -260,6 +264,9 @@ docs/guide/file-upload-guide.md       ← 面向开发者的 How-to
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v5.2.0** (2026-07-24):
+  - **弹性降级对齐**：与 docs-layout-quadrant v2.5.1 对齐。阶段 0 目录准备改为"核心三支撑（specs/ + plan/ + guide/）+ tracking 强约束 + reqs 按决策树"；阶段 1 增加 reqs/ 内联降级说明；阶段 2 明确 tracking/ 在 `/xy-feat` 下强制创建；阶段 6 增加内联 Checklist 整体归档处理。
+  - 文档命名表标注 `tracking/` 为 `[xy-feat强制必选]`。
 - **v5.1.0** (2026-07-23):
   - **归档方案统一**：specs/plan/tracking 旧版统一追加 `-archived` 后缀并移入 `docs/.archive/{象限}/`，废弃 `[DONE]` 标记与象限内 `.archive/` 子目录方案，与 docs-layout-quadrant v2.3.0 对齐。
   - **规则文件注入并入阶段 6**：docs-layout-quadrant 的规则文件注入（向 AGENTS.md/CLAUDE.md 注入 docs 结构说明标记块）明确为阶段 6 职责，xy-feat 不新增独立阶段。

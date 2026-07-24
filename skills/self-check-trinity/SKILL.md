@@ -69,6 +69,8 @@ git commit -m "fix: something" --no-verify
 
 ### <Good>
 
+> 以下示例以 pnpm 为例。执行前应先通过项目根目录下的锁文件探测实际包管理器（`pnpm-lock.yaml` → pnpm / `yarn.lock` → yarn / `package-lock.json` → npm），替换为对应命令。
+
 ```bash
 # Node 项目示例
 pnpm run lint

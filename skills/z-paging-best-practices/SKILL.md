@@ -5,7 +5,7 @@ version: "1.0.3"
 author: xiaoyu
 ---
 
-# z-paging 最佳实践
+# z-paging-best-practices
 
 > **生命周期阶段**：稳定
 > **底层机制**：z-paging 维护内部 scroll-view，通过 `@query` 回调自动计算 `pageNo` 和 `pageSize`。获取数据后调用 `paging.value.completeByTotal(list, total)` 或 `paging.value.complete(list)` 告知组件。默认开启 `fixed` 模式，`position: fixed; top: 0; bottom: 0` 铺满屏幕，内部使用 flex 纵向布局。
@@ -22,7 +22,7 @@ author: xiaoyu
 ## ⚙️ 依赖与先决条件
 
 - uni-app 项目（微信小程序 / H5）。可通过检查项目根目录下是否存在 `manifest.json` 文件（`ls manifest.json`）来确认。
-- `z-paging` v2.8+（参考标准为 v2.8.6，执行前先确认项目实际版本）。可通过运行 `ls src/uni_modules/` 并查找 `z-paging` 目录或检查锁文件确认实际版本。
+- `z-paging` v2.8+（参考标准为 v2.8.x，执行前先确认项目实际版本）。可通过运行 `ls src/uni_modules/` 并查找 `z-paging` 目录或检查锁文件确认实际版本。
 - `uv-ui` 组件库（用于 `uv-navbar` 等 UI 组件）。可通过运行 `ls src/uni_modules/` 并查找 `uv-ui` 确认。
 - 运行环境假设为类 Unix 终端（示例命令使用 `ls`）。
 

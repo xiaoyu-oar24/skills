@@ -14,7 +14,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 ### 验证流程
 
-1. 所有任务卡片在 `docs/tracking/<功能名>.md` 中标记为 `✅` 后，通过技能调用 `self-check-trinity`：
+1. 所有任务卡片在 `aidocs/tracking/<功能名>.md` 中标记为 `✅` 后，通过技能调用 `self-check-trinity`：
    - 自动识别项目技术栈，确定对应的 lint / typecheck / test 命令
    - 依次执行三道检查，任一步骤失败则必须修复后重试（最高 3 次）
    - 修复策略遵循 `references/fallback-tdd.md` 3.5 的调试流程
@@ -33,7 +33,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 ## 阶段 5 内联流程：代码审查与收尾
 
-> **路径安全说明**：阶段 5 在文档归档前执行，此时 `docs/plan/<功能名>-plan.md` 与 `docs/tracking/<功能名>.md` 仍处于标准目录中，不会引发 FileNotFound 报错。
+> **路径安全说明**：阶段 5 在文档归档前执行，此时 `aidocs/plan/<功能名>-plan.md` 与 `aidocs/tracking/<功能名>.md` 仍处于标准目录中，不会引发 FileNotFound 报错。
 
 ### 5.1 代码审查
 
@@ -45,7 +45,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 2. 派发子代理进行审查，提示词包含：
    - **DESCRIPTION**：本次功能简述
-   - **PLAN_OR_REQUIREMENTS**：对应的 `docs/plan/<功能名>-plan.md` 与 `docs/specs/<功能名>-design.md` 文件路径
+   - **PLAN_OR_REQUIREMENTS**：对应的 `aidocs/plan/<功能名>-plan.md` 与 `aidocs/specs/<功能名>-design.md` 文件路径
    - **BASE_SHA / HEAD_SHA**：变更范围
    - 要求输出：Strengths、Critical/Important/Minor Issues、Assessment
 

@@ -1,13 +1,13 @@
 ---
 name: xy-feat
 description: "端到端功能开发工作流（需求澄清、方案设计、规划分解、TDD/VDD 执行、验证、代码审查收尾、指南与合规整理）。优先调用 superpowers 技能链，未安装时按需降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发。"
-version: "5.2.0"
+version: "5.3.0"
 author: xiaoyu
 ---
 
 # xy-feat
 
-> **生命周期阶段**：稳定 (v5.2.0)
+> **生命周期阶段**：稳定 (v5.3.0)
 > **定位**：将 **需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证完成 → 审查收尾 → 指南与归档** 串成一条端到端流水线。
 > **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**；若 superpowers 未安装（技能调用返回不可用），则按需读取 `references/` 下的对应降级文件执行内联流程（对应关系见"Superpowers 技能依赖"表）。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
@@ -59,15 +59,15 @@ author: xiaoyu
 
 | 象限 | 路径 | 命名模式 | 示例 | 说明/约束 |
 | :--- | :--- | :--- | :--- | :--- |
-| 需求文档 | `docs/reqs/` | `<功能名>-req.md` | `gateway-proxy-req.md` | 按决策树判定 |
-| 设计规范 | `docs/specs/` | `<功能名>-design.md` | `gateway-proxy-design.md` | 核心必选 |
-| 执行计划 | `docs/plan/` | `<功能名>-plan.md` | `gateway-proxy-plan.md` | 核心必选 |
-| 进度跟踪 | `docs/tracking/` | `<功能名>.md` | `gateway-proxy.md` | xy-feat 上下文中强制必选 |
-| 使用指南 | `docs/guide/` | `<功能名>-guide.md` | `gateway-proxy-guide.md` | 核心必选 |
+| 需求文档 | `aidocs/reqs/` | `<功能名>-req.md` | `gateway-proxy-req.md` | 按决策树判定 |
+| 设计规范 | `aidocs/specs/` | `<功能名>-design.md` | `gateway-proxy-design.md` | 核心必选 |
+| 执行计划 | `aidocs/plan/` | `<功能名>-plan.md` | `gateway-proxy-plan.md` | 核心必选 |
+| 进度跟踪 | `aidocs/tracking/` | `<功能名>.md` | `gateway-proxy.md` | xy-feat 上下文中强制必选 |
+| 使用指南 | `aidocs/guide/` | `<功能名>-guide.md` | `gateway-proxy-guide.md` | 核心必选 |
 
 - `<功能名>` 使用英文 kebab-case 或简明中文，描述功能模块本身，**不含日期**。
 - 同一功能的五维文档共享相同的 `<功能名>` 前缀。
-- **活文档策略**：若同名文档已存在，优先**原地更新**（文档随代码演进）。若必须保留旧版，将旧版追加 `-archived` 后缀后移入统一归档目录 `docs/.archive/{象限}/`，保持主文件名不变。
+- **活文档策略**：若同名文档已存在，优先**原地更新**（文档随代码演进）。若必须保留旧版，将旧版追加 `-archived` 后缀后移入统一归档目录 `aidocs/.archive/{象限}/`，保持主文件名不变。
 
 ## 📖 标准工作流
 
@@ -82,14 +82,14 @@ author: xiaoyu
 
 1. **需求确认**：若用户输入为空或不清晰，向用户提问："你要做什么功能？"
 2. **功能名确定**：从需求中提炼出 `<功能名>`（kebab-case 或简明中文），用于全流程文档命名。提炼结果**必须经用户确认**（或用户明确授权自动定名）后方可使用。
-3. **目录准备**：确保 `docs/specs`、`docs/plan`、`docs/guide` 三个核心目录及 `docs/tracking` 强约束目录存在（`mkdir -p docs/specs docs/plan docs/guide docs/tracking`）。`docs/tracking/` **在 `/xy-feat` 上下文强制创建**（保障阶段 3 多 Agent 并发安全）；`docs/reqs/` 按决策树判定（见 `docs-layout-quadrant` 阶段 2）。
+3. **目录准备**：确保 `aidocs/specs`、`aidocs/plan`、`aidocs/guide` 三个核心目录及 `aidocs/tracking` 强约束目录存在（`mkdir -p aidocs/specs aidocs/plan aidocs/guide aidocs/tracking`）。`aidocs/tracking/` **在 `/xy-feat` 上下文强制创建**（保障阶段 3 多 Agent 并发安全）；`aidocs/reqs/` 按决策树判定（见 `docs-layout-quadrant` 阶段 2）。
 4. **冲突检测（活文档策略）**：
 
    ```
-   若 docs/specs/<功能名>-design.md 已存在：
+   若 aidocs/specs/<功能名>-design.md 已存在：
      默认行为：原地更新该文档（活文档理念，文档随代码演进）
      若用户明确要求保留旧版：
-       1. 将旧文件重命名为 <功能名>-archived.md，移入 docs/.archive/specs/
+       1. 将旧文件重命名为 <功能名>-archived.md，移入 aidocs/.archive/specs/
        2. 新版本使用原始名称 <功能名>-design.md
    ```
 
@@ -108,7 +108,7 @@ author: xiaoyu
 > **优先**：通过技能调用 `brainstorming`。
 > **降级**：读取 `references/fallback-init-design.md`，执行一站式 Draft 呈现审批流程（需求澄清 → 方案对比 → 结构化 Draft 一次性提交审批 → 撰写设计文档 → 自审）。
 
-**必须产出**：`docs/specs/<功能名>-design.md`（背景、方案选择理由、架构设计、接口定义、数据模型、测试策略）。
+**必须产出**：`aidocs/specs/<功能名>-design.md`（背景、方案选择理由、架构设计、接口定义、数据模型、测试策略）。
 
 > **reqs/ 内联降级**：若经决策树判定（纯技术重构/优化）跳过独立 `reqs/`，必须在 design.md 头部包含【`## 1. 需求背景与改造目标`】章节作为降级替代（模板见 `docs-layout-quadrant` 范例）。
 
@@ -124,8 +124,8 @@ author: xiaoyu
 > **降级**：读取 `references/fallback-plan.md`，执行内联流程（任务拆解原则、任务卡片四要素、规划文档模板、批量 Git 原子提交预授权、自审清单）。
 
 **必须产出**：
-- `docs/plan/<功能名>-plan.md`：任务拆解到 2-5 分钟粒度，每个任务卡片含 Files / Interfaces / Steps / Expected，**禁止 TBD/TODO**。
-- `docs/tracking/<功能名>.md`：**在 `/xy-feat` 上下文强制创建**，初始化全部任务卡片状态为 `⏳`（格式模板见 `references/fallback-plan.md`）。`tracking/` 的强制创建保障阶段 3 多 Agent 并发写入安全（子代理禁写、主编排代理集中更新）。
+- `aidocs/plan/<功能名>-plan.md`：任务拆解到 2-5 分钟粒度，每个任务卡片含 Files / Interfaces / Steps / Expected，**禁止 TBD/TODO**。
+- `aidocs/tracking/<功能名>.md`：**在 `/xy-feat` 上下文强制创建**，初始化全部任务卡片状态为 `⏳`（格式模板见 `references/fallback-plan.md`）。`tracking/` 的强制创建保障阶段 3 多 Agent 并发写入安全（子代理禁写、主编排代理集中更新）。
 
 **阶段出口**：规划自审通过（Spec 全覆盖、无占位符、跨任务类型/签名一致）并获用户确认。在送审时声明：“批准本计划即授权 AI 在阶段 3 执行本地 Git 原子提交 (`git commit -m ...`)”。
 
@@ -154,8 +154,8 @@ author: xiaoyu
 ```
 
 **执行要求（任何模式下都必须遵守）**：
-- **子代理并发安全**：**禁止**并行子代理直接使用 Edit 修改全局 `docs/tracking/<功能名>.md`。子代理只需在返回消息中包含 `Task N Complete`，由**主编排代理**集中统一更新跟踪文件。
-- **实时追踪**：主编排代理每确认完成一个任务卡片，立即将 `docs/tracking/<功能名>.md` 对应条目标记为 `✅`，并记录关键提交 hash。
+- **子代理并发安全**：**禁止**并行子代理直接使用 Edit 修改全局 `aidocs/tracking/<功能名>.md`。子代理只需在返回消息中包含 `Task N Complete`，由**主编排代理**集中统一更新跟踪文件。
+- **实时追踪**：主编排代理每确认完成一个任务卡片，立即将 `aidocs/tracking/<功能名>.md` 对应条目标记为 `✅`，并记录关键提交 hash。
 - **调试纪律**：遇到 Bug 先走根因调查（四阶段调试法），最多 3 次不同假设的重试，禁止猜测式修复。
 - **跨任务对齐**：开始下一个任务卡片前，重新查看 plan 文档的设计上下文，严防"文档写一套、代码写另一套"。
 
@@ -187,7 +187,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 **使用工具**：命令行/终端、技能调用、子代理调度、向用户提问
 
-> **顺序关键说明**：阶段 5 处于文档归档前，此时 `docs/plan/<功能名>-plan.md` 与 `docs/tracking/<功能名>.md` 仍处于标准路径下，保证 CR 子代理读取文件不会引发 FileNotFound 错误。
+> **顺序关键说明**：阶段 5 处于文档归档前，此时 `aidocs/plan/<功能名>-plan.md` 与 `aidocs/tracking/<功能名>.md` 仍处于标准路径下，保证 CR 子代理读取文件不会引发 FileNotFound 错误。
 >
 > **优先**：
 > - 代码审查 → 通过技能调用 `requesting-code-review`
@@ -206,16 +206,16 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 **使用工具**：写入文件、技能调用（调用文档布局整理技能）
 
-1. 基于 plan 文档和实际实现，生成使用指南至 `docs/guide/<功能名>-guide.md`：
+1. 基于 plan 文档和实际实现，生成使用指南至 `aidocs/guide/<功能名>-guide.md`：
    - 功能概述、使用方式、API 接口说明（如有）、注意事项
 
 2. 通过技能调用 `docs-layout-quadrant` 完成文档合规整理与收尾归档，覆盖：
    - 命名规范校验（无日期前缀）
    - 五维归类（含弹性降级决策树判定）
-   - **象限生命周期管理**：将已交付的 `docs/plan/<功能名>-plan.md` 追加 `-archived` 后缀移入 `docs/.archive/plan/`（若含内联 Checklist 则整体归档）；将已验收的 `docs/tracking/<功能名>.md` 按价值决策处理（含设计讨论/决策记录 → 追加 `-archived` 移入 `docs/.archive/tracking/`；纯勾选清单 → 经用户确认后删除）
-   - `docs/INDEX.md` 索引更新
+   - **象限生命周期管理**：将已交付的 `aidocs/plan/<功能名>-plan.md` 追加 `-archived` 后缀移入 `aidocs/.archive/plan/`（若含内联 Checklist 则整体归档）；将已验收的 `aidocs/tracking/<功能名>.md` 按价值决策处理（含设计讨论/决策记录 → 追加 `-archived` 移入 `aidocs/.archive/tracking/`；纯勾选清单 → 经用户确认后删除）
+   - `aidocs/INDEX.md` 索引更新
    - 相对路径校验与残留验证
-   - **规则文件注入**：向项目根目录 `AGENTS.md` / `CLAUDE.md` 注入 docs 目录结构说明标记块（已存在则更新块内内容，文件不存在则跳过）
+   - **规则文件注入**：向项目根目录 `AGENTS.md` / `CLAUDE.md` 注入 aidocs 目录结构说明标记块（已存在则更新块内内容，文件不存在则跳过）
 
 ---
 
@@ -223,7 +223,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 - **🚫 禁止日期前缀**：所有产出文档必须使用领域主体命名（`<功能名>-design.md`），**禁止** `YYYY-MM-DD-<功能名>-design.md` 格式。文档是知识图谱，不是流水账。
 - **阶段不可跳跃**：默认必须按 0→1→2→3→4→5→6 顺序执行。必须先审查收尾(阶段 5)后再归档文档(阶段 6)。若用户要求跳过某阶段，需明确告知风险并获得确认后方可跳过。
-- **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入 `docs/.archive/{象限}/`，**禁止**自动追加 `-v2`/`-v3` 后缀。
+- **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入 `aidocs/.archive/{象限}/`，**禁止**自动追加 `-v2`/`-v3` 后缀。
 - **Git 写操作需授权**：`git add`/`git commit`/`git push`/`git reset`/`git checkout --` 等写操作必须先获得用户授权（阶段 2 计划送审时可批量预授权阶段 3 本地原子提交）；未授权时禁止自动操作。
 - **证据优先与强校验**：阶段 4 的验证必须有新鲜命令输出为凭，阶段 5 的审查必须有 diff 结果为凭，禁止空口断言或信任过时缓存。
 
@@ -233,7 +233,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 - 先归档 tracking/plan 文档再执行代码审查，导致 CR 阶段报 FileNotFound 文件不存在错误。
 - 编码前不先写失败的测试（也不判定是否适用 VDD），直接编写实现代码。
-- 并行派发多个子代理时让子代理直接编辑 `docs/tracking/<功能名>.md`，导致后完成者覆盖先完成者的进度。
+- 并行派发多个子代理时让子代理直接编辑 `aidocs/tracking/<功能名>.md`，导致后完成者覆盖先完成者的进度。
 - 验证阶段只口头声称"已通过"，未在当前消息中提供真实的测试与代码质量校验命令输出。
 - 使用日期前缀命名文档（`2026-07-15-上传功能-design.md`），或者同名文档冲突时自动追加 `-v2` 后缀制造多版本歧义。
 
@@ -241,11 +241,11 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 ```markdown
 # 领域主体命名 + 五维（活文档）
-docs/reqs/file-upload-req.md           ← 需求文档，验收后冻结保留
-docs/specs/file-upload-design.md      ← 原地更新，随代码演进的长周期文档
-docs/plan/file-upload-plan.md         ← 阶段 5 审查通过后在阶段 6 追加 -archived 归档至 docs/.archive/plan/
-docs/tracking/file-upload.md          ← 阶段 5 审查通过后在阶段 6 归档至 docs/.archive/tracking/ 或删除
-docs/guide/file-upload-guide.md       ← 面向开发者的 How-to
+aidocs/reqs/file-upload-req.md           ← 需求文档，验收后冻结保留
+aidocs/specs/file-upload-design.md      ← 原地更新，随代码演进的长周期文档
+aidocs/plan/file-upload-plan.md         ← 阶段 5 审查通过后在阶段 6 追加 -archived 归档至 aidocs/.archive/plan/
+aidocs/tracking/file-upload.md          ← 阶段 5 审查通过后在阶段 6 归档至 aidocs/.archive/tracking/ 或删除
+aidocs/guide/file-upload-guide.md       ← 面向开发者的 How-to
 ```
 
 ```markdown
@@ -264,11 +264,14 @@ docs/guide/file-upload-guide.md       ← 面向开发者的 How-to
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v5.3.0** (2026-07-31):
+  - **五维文档根目录迁移**：与 docs-layout-quadrant v3.0.0 对齐。五维文档根目录从 `docs/` 迁移至专属目录 `aidocs/`（reqs/specs/plan/tracking/guide/.archive/INDEX.md 全部位于 `aidocs/` 下），`docs/` 留给项目其他用途；SKILL.md 及 references/ 全部降级文件中的路径引用同步更新。
+
 - **v5.2.0** (2026-07-24):
   - **弹性降级对齐**：与 docs-layout-quadrant v2.5.1 对齐。阶段 0 目录准备改为"核心三支撑（specs/ + plan/ + guide/）+ tracking 强约束 + reqs 按决策树"；阶段 1 增加 reqs/ 内联降级说明；阶段 2 明确 tracking/ 在 `/xy-feat` 下强制创建；阶段 6 增加内联 Checklist 整体归档处理。
   - 文档命名表标注 `tracking/` 为 `[xy-feat强制必选]`。
 - **v5.1.0** (2026-07-23):
-  - **归档方案统一**：specs/plan/tracking 旧版统一追加 `-archived` 后缀并移入 `docs/.archive/{象限}/`，废弃 `[DONE]` 标记与象限内 `.archive/` 子目录方案，与 docs-layout-quadrant v2.3.0 对齐。
+  - **归档方案统一**：specs/plan/tracking 旧版统一追加 `-archived` 后缀并移入 `aidocs/.archive/{象限}/`，废弃 `[DONE]` 标记与象限内 `.archive/` 子目录方案，与 docs-layout-quadrant v2.3.0 对齐。
   - **规则文件注入并入阶段 6**：docs-layout-quadrant 的规则文件注入（向 AGENTS.md/CLAUDE.md 注入 docs 结构说明标记块）明确为阶段 6 职责，xy-feat 不新增独立阶段。
 - **v5.0.0** (2026-07-23):
   - **打破逻辑死锁**：交换阶段 5 与阶段 6 顺序，调整为`验证 → 审查收尾(阶段 5) → 指南产出与归档(阶段 6)`，彻底解决 CR 子代理找不到已归档文件的死锁问题。

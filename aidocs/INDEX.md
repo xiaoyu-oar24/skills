@@ -24,22 +24,13 @@
 | :--- | :--- | :--- |
 | AI 规则与技能统一编写规范 | guide | [AI规则与技能统一编写规范.md](guide/AI规则与技能统一编写规范.md) |
 | Superpowers 技能速查 | guide | [superpowers.md](guide/superpowers.md) |
+| 四象限协作协议 | guide | [四象限协作协议.md](guide/四象限协作协议.md) |
 
 ## 📦 归档文档
-> 仅列出仍有参考价值的归档文档（如被替代的旧版设计），纯 tracking 清单不列入。
-| 文档 | 原象限 | 归档原因 | 文件 |
-| :--- | :--- | :--- | :--- |
-| 第 2 版技能审计报告 | specs | 已合并入《技能审计历史记录汇总》 | [.archive/specs/skills-audit-report-archived.md](.archive/specs/skills-audit-report-archived.md) |
-| 通用标准版审计报告 | specs | 已合并入《技能审计历史记录汇总》 | [.archive/specs/技能审计报告-通用标准-archived.md](.archive/specs/技能审计报告-通用标准-archived.md) |
-| 技能修复报告 | specs | 已合并入《技能审计历史记录汇总》 | [.archive/specs/技能修复报告-archived.md](.archive/specs/技能修复报告-archived.md) |
-| 文档架构诊断与重构建议 | specs | 历史诊断，四象限布局已落地 | [.archive/specs/文档架构诊断与重构建议-archived.md](.archive/specs/文档架构诊断与重构建议-archived.md) |
-| 项目结构重构执行计划 | plan | 项目已交付 | [.archive/plan/project-refactor-plan-archived.md](.archive/plan/project-refactor-plan-archived.md) |
-| 全量快照审计报告 | tracking | 历史快照（数据已被第 3 版校准） | [.archive/tracking/skill-audit-report-archived.md](.archive/tracking/skill-audit-report-archived.md) |
-| 项目重构追踪 | tracking | 任务已验收 | [.archive/tracking/project-refactor-archived.md](.archive/tracking/project-refactor-archived.md) |
-| Git Diff 深度审查报告 | tracking | 历史审查（P0/P1/P2 已全部修复） | [.archive/tracking/git-diff-review-report-archived.md](.archive/tracking/git-diff-review-report-archived.md) |
-| 技能 AI 兼容性审计报告 | tracking | 历史审计（P0/P1/P2 已全部修复） | [.archive/tracking/技能AI兼容性审计报告-archived.md](.archive/tracking/技能AI兼容性审计报告-archived.md) |
-| 当前修改检查报告 | specs | 历史检查（引用状态已过期） | [.archive/specs/当前修改检查报告-archived.md](.archive/specs/当前修改检查报告-archived.md) |
-| 五维文档布局设计方案 | specs | 已落地实现 | [.archive/specs/docs-layout-design-archived.md](.archive/specs/docs-layout-design-archived.md) |
+> 历史文档统一存放于 `aidocs/.archive/`，此处仅作分类概括（总行数 ≤ 5，不展开长列表）：
+- specs ×6：审计报告（v2/通用版/修复）、诊断与重构建议、布局设计、修改检查 —— 均已闭环或被新版合并替代
+- plan ×1：项目结构重构执行计划 —— 已交付
+- tracking ×4：追踪与审查报告 —— 均已验收闭环
 
 ---
 

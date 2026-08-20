@@ -13,6 +13,7 @@
 | 文档 | 象限 | 文件 |
 | :--- | :--- | :--- |
 | 项目结构重构设计 | specs | [project-refactor-design.md](specs/project-refactor-design.md) |
+| 文档产出分级判定（Doc-Tier Gate） | specs | [文档产出分级判定.md](specs/文档产出分级判定.md) |
 
 ## Agent 行为规范
 | 文档 | 象限 | 文件 |
@@ -39,8 +40,10 @@
 | 象限 | 路径 | 定位 | 生命周期 |
 | :--- | :--- | :--- | :--- |
 | 需求文档 | `reqs/` | 产品需求描述（PRD），记录 What——页面功能、交互流程、业务规则 [按需-决策树] | 中长周期 — 验收后冻结保留 |
-| 设计规范 | `specs/` | 技术架构决策（ADR），记录 Why——架构选型、接口设计、数据模型 [核心必选] | 长周期 |
-| 执行计划 | `plan/` | 实施计划与任务拆解 [核心必选] | 短周期 — 交付后追加 `-archived` 归档至 `.archive/plan/` |
-| 进度跟踪 | `tracking/` | 任务 Checklist [xy-feat必选/单任务按需] | 超短周期 — 验收后归档至 `.archive/tracking/` 或删除 |
-| 使用指南 | `guide/` | 面向开发者的 How-to 操作手册 [核心必选] | 长周期 |
+| 设计规范 | `specs/` | 技术架构决策（ADR），记录 Why——架构选型、接口设计、数据模型 [核心资产] | 长周期 |
+| 执行计划 | `plan/` | 实施计划与任务拆解 [L2 全量档落盘] | 短周期 — 交付后追加 `-archived` 归档至 `.archive/plan/` |
+| 进度跟踪 | `tracking/` | 任务 Checklist [L2 全量档落盘/多Agent强制] | 超短周期 — 验收后归档至 `.archive/tracking/` 或删除 |
+| 使用指南 | `guide/` | 面向开发者的 How-to 操作手册 [核心资产/按需] | 长周期 |
 | 归档 | `.archive/{象限}/` | 统一归档目录 | 历史版本、已完成计划、废弃文档 |
+
+> **文档产出分级（Doc-Tier Gate）**：L0 轻量（零文档，Bug 修复/单文件改动）→ L1 精简（specs 必产 + guide 按需，plan/tracking 对话内维护）→ L2 全量（五维全出，跨模块/多 Agent 并行/架构决策）。详见 [specs/文档产出分级判定.md](specs/文档产出分级判定.md)。

@@ -1,7 +1,7 @@
 ---
 name: "lean-docs"
-description: "文档体系瘦身与检索治理技能：归档过期的 plan/tracking、精简活文档冗余流水账、重构紧凑版 INDEX.md 索引，并在各 AI 工具的忽略配置中阻断检索噪音，极致降低 Token 消耗。TRIGGER when: 用户输入 /lean-docs、提及精简文档/文档瘦身/降低文档 Token 消耗/收敛已完成的计划与追踪堆积。SKIP: 新建功能或进行中的需求开发（用 xy-feat）；仅做五维结构归类、命名校验、规则文件注入（用 docs-layout-quadrant）。"
-version: "1.2.0"
+description: "文档体系瘦身与检索治理技能：归档过期的 plan/tracking、精简活文档冗余流水账、重构紧凑版 INDEX.md 索引，并在各 AI 工具的忽略配置中阻断检索噪音，极致降低 Token 消耗。TRIGGER when: 用户输入 /lean-docs、提及精简文档/文档瘦身/降低文档 Token 消耗/收敛已完成的计划与追踪堆积。SKIP: 新建功能或进行中的需求开发（用 xy-feat，其阶段 0 会做 L0/L1/L2 档位判定）；仅做五维结构归类、命名校验、规则文件注入（用 docs-layout-quadrant）。"
+version: "1.2.1"
 author: "xiaoyu"
 ---
 
@@ -17,14 +17,14 @@ author: "xiaoyu"
   - 用户提及“精简文档”、“文档瘦身”、“降低文档 Token 消耗”、“收敛已完成的计划与追踪堆积”
   - 文档库经过多轮迭代后出现大量已完成的 plan/tracking 堆积或活文档过长
 - **SKIP**（与相邻技能硬性分流）:
-  - 正在进行中的业务功能开发任务（应使用 `xy-feat`）
+  - 正在进行中的业务功能开发任务（应使用 `xy-feat`，其阶段 0 会做档位判定：L0 轻量/L1 精简/L2 全量）
   - 仅做五维结构归类、命名规范校验、规则文件注入（应使用 `docs-layout-quadrant`）
   - 对代码源码或配置文件的直接修改
 
 ## ⚙️ 依赖与先决条件
 
 - 项目存在 `aidocs/` 目录且遵循五维布局规范（若仍为旧版 `docs/`，先调用 `docs-layout-quadrant` 执行阶段 0 迁移）。
-- **版本对齐**：依赖 `docs-layout-quadrant ≥ v3.0.0`（五维 `aidocs/` 布局、统一归档目录 `aidocs/.archive/{象限}/`、弹性降级决策树）。`docs-layout-quadrant` 升级主版本时，需同步复核本技能对生命周期与归档规则的引用。
+- **版本对齐**：依赖 `docs-layout-quadrant ≥ v3.1.0`（五维 `aidocs/` 布局、统一归档目录 `aidocs/.archive/{象限}/`、文档产出分级判定 Doc-Tier Gate——L0 轻量/L1 精简/L2 全量）。`docs-layout-quadrant` 升级主版本时，需同步复核本技能对生命周期与归档规则的引用。
 - Git 版本控制正常工作（运行 `git --version` 确认，用于安全追踪与回滚）。
 - 运行环境假设为类 Unix 终端（支持 `git mv`、文件搜索工具）。
 
@@ -158,6 +158,8 @@ author: "xiaoyu"
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v1.2.1** (2026-08-21):
+  - **对齐文档产出分级（Doc-Tier Gate）**：版本依赖升级为 `docs-layout-quadrant ≥ v3.1.0`（新增 L0 轻量/L1 精简/L2 全量三档模型）；SKIP 说明补充 xy-feat 阶段 0 档位判定提示，与新分级模型硬性分流。
 - **v1.2.0** (2026-07-31):
   - **去 AI 工具特化**：检索阻断从仅 `.claudeignore` 泛化为多 AI 工具通用（Claude Code `.claudeignore` / Cursor `.cursorignore` / opencode `opencode.json#ignore` / Codex CLI `.codexignore`），并新增“按实际工具检测补齐”步骤。
   - **生命周期归档改为委托**：阶段 1 不再重复实现归档逻辑，改为调用 `docs-layout-quadrant` 阶段 3，消除“双权威”与规则漂移风险。

@@ -1,27 +1,6 @@
 # AI Skills 集合库
 
-自定义 AI 代理技能（Skills）的集合仓库，专为 **opencode**、**Claude Code** 等现代 AI 辅助编程工具设计。每个技能聚焦一个具体的工程场景，通过标准化的 `SKILL.md` 文件指导 AI 完成任务。
-
-## 安装
-
-### opencode
-
-将仓库克隆到 opencode 的全局技能目录：
-
-```bash
-git clone <repo-url> ~/.config/opencode/skills/
-```
-
-重启编辑器或打开新会话即可生效（opencode 有缓存机制）。
-
-### Claude Code
-
-将仓库克隆到本地后，在目标项目的 `CLAUDE.md` 中添加钩子：
-
-```markdown
-需要时，主动通过 Read 工具读取 ~/.config/opencode/skills/skills/<skill-name>/SKILL.md，
-并严格遵循该文件中的工作流和行为护栏执行任务。
-```
+自定义 AI 代理技能（Skills）的集合仓库，专为现代 AI 辅助编程工具设计。每个技能聚焦一个具体的工程场景，通过标准化的 `SKILL.md` 文件指导 AI 完成任务。
 
 ## 技能列表
 
@@ -42,28 +21,29 @@ git clone <repo-url> ~/.config/opencode/skills/
 
 ```
 /
-├── aidocs/                        # AI 过程文档（五维：reqs/specs/plan/tracking/guide，含弹性降级）
+├── aidocs/                        # AI 过程文档（五维：reqs/specs/plan/tracking/guide，含文档产出分级 Doc-Tier Gate）
 │   ├── INDEX.md                   # 知识索引导航
 │   ├── reqs/                      # 需求文档 [按需-决策树]（中长周期，验收后冻结保留）
-│   ├── specs/                     # 设计规范 [核心必选]（长周期）
+│   ├── specs/                     # 设计规范 [核心资产]（长周期，契约防腐）
 │   │   ├── 任务边界自律守则.md
 │   │   ├── 技能审计报告-深度综合版.md
 │   │   ├── xy-feat工作流优化方案.md
+│   │   ├── 文档产出分级判定.md
 │   │   └── ...
-│   ├── plan/                      # 执行计划 [核心必选]（短周期）
-│   ├── tracking/                  # 进度跟踪 [xy-feat必选/单任务按需]（超短周期）
-│   └── guide/                     # 使用指南 [核心必选]（长周期）
+│   ├── plan/                      # 执行计划 [L2 全量档落盘]（短周期，脚手架）
+│   ├── tracking/                  # 进度跟踪 [L2 全量档落盘/多Agent强制]（超短周期，脚手架）
+│   └── guide/                     # 使用指南 [核心资产/按需]（长周期，团队资产）
 │       ├── AI规则与技能统一编写规范.md
 │       ├── superpowers.md
 │       └── ...
 ├── skills/                        # 技能容器目录
-│   ├── xy-feat/                   # 功能开发工作流 (v5.3.0)
+│   ├── xy-feat/                   # 功能开发工作流 (v5.4.0)
 │   ├── uniapp-wechat-scaffold/    # UniApp 脚手架
 │   ├── self-check-trinity/        # 三合一质量检查
 │   ├── unified-api-response/      # 统一 API 响应
 │   ├── api-name-drift-defense/    # API 漂移防御
-│   ├── docs-layout-quadrant/      # 文档五维布局 (v3.0.1)
-│   ├── lean-docs/                 # 文档瘦身与检索治理 (v1.2.0)
+│   ├── docs-layout-quadrant/      # 文档五维布局 (v3.1.0)
+│   ├── lean-docs/                 # 文档瘦身与检索治理 (v1.2.1)
 │   ├── health-probe-discipline/   # 探针规范
 │   ├── z-paging-best-practices/   # z-paging 分页最佳实践
 │   └── code-search-discipline/    # 代码搜索纪律
@@ -81,7 +61,3 @@ git clone <repo-url> ~/.config/opencode/skills/
 - **📖 核心工作流** — 执行步骤
 - **⛔ 行为护栏** — 安全约束
 - **📝 模板与范例** — 代码参考
-
-### 打包分发
-
-> 若需将技能导入 [cc-switch](https://ccswitch.io) 等工具，请手动进入各技能目录打包，确保 `SKILL.md` 位于 zip 根目录，且一个 zip 对应一个技能。

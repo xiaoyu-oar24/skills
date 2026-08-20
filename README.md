@@ -36,6 +36,7 @@ git clone <repo-url> ~/.config/opencode/skills/
 | `api-name-drift-defense` | 防御第三方库版本升级导致的 API 重命名/移除问题 |
 | `health-probe-discipline` | 服务探针端点（health/readiness/liveness）规范约束，支持 Node/Java/Python 多技术栈 |
 | `z-paging-best-practices` | z-paging 分页组件的最佳实践指南，包含下拉刷新、上滑加载及布局防踩坑指南 |
+| `code-search-discipline` | 代码搜索纪律：grep 必须限定目录级 path 或 include 文件类型过滤器（禁止裸搜 src/ 根）、绕开 node_modules/uni_modules/static 等风险目录、大型源码优先 codegraph 语义探索（grep 仅做定位行号等窄查询） |
 
 ## 目录结构
 
@@ -64,7 +65,8 @@ git clone <repo-url> ~/.config/opencode/skills/
 │   ├── docs-layout-quadrant/      # 文档五维布局 (v3.0.1)
 │   ├── lean-docs/                 # 文档瘦身与检索治理 (v1.2.0)
 │   ├── health-probe-discipline/   # 探针规范
-│   └── z-paging-best-practices/   # z-paging 分页最佳实践
+│   ├── z-paging-best-practices/   # z-paging 分页最佳实践
+│   └── code-search-discipline/    # 代码搜索纪律
 ├── README.md
 ├── CLAUDE.md
 └── AGENTS.md

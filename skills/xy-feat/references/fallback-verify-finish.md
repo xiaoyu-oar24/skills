@@ -27,13 +27,16 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 3. 验证未通过 → 回到阶段 3，走调试流程修复后重新走阶段 4
 
-4. 验证全部通过 → 进入阶段 5 (代码审查与收尾)
+4. 验证全部通过后：
+   - L1 档更新 specs 的 `## Execution State` 节，写入验证命令、证据路径和当前状态。
+   - L2 档同步 tracking 状态，并将已交付文档 frontmatter 更新为 `status: delivered`。
+   - 随后进入阶段 5（代码审查与收尾）。
 
 ---
 
 ## 阶段 5 内联流程：代码审查与收尾
 
-> **路径安全说明**：阶段 5 在文档归档前执行，此时 `aidocs/plan/<功能名>-plan.md` 与 `aidocs/tracking/<功能名>.md`（L2 档）仍处于标准目录中，不会引发 FileNotFound 报错。L1/L0 档无落盘 plan/tracking，CR 依据对话内设计上下文与 specs 文档。
+> **路径安全说明**：阶段 5 在文档归档前执行，此时 `aidocs/plan/<功能名>-plan.md` 与 `aidocs/tracking/<功能名>.md`（L2 档）仍处于标准目录中，不会引发 FileNotFound 报错。L1/L0 档无落盘 plan/tracking；L1 的 CR 必须以 specs 的 `Execution State` 与设计内容为恢复上下文，不依赖易失对话历史。
 
 ### 5.1 代码审查
 

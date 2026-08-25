@@ -85,6 +85,9 @@ REFACTOR（重构）：
 
 ## 3.4 实时追踪（主编排代理负责）
 
+- **L1 档**：对话内状态变化后必须立即同步 `aidocs/specs/<功能名>-design.md` 的 `## Execution State` 节，确保会话中断后可恢复。
+- **L2 档**：主编排代理集中更新 tracking 文档；交付验证通过后再同步 frontmatter 为 `status: delivered`。
+
 **按档位**：L2 档每确认完成一个任务卡片，主编排代理立即编辑 `aidocs/tracking/<功能名>.md` 中对应条目标记为 `✅`，并记录关键提交 hash；L1 档在对话内维护同一清单（仅状态变更，不落盘）；L0 档不追踪：
 
 ```markdown

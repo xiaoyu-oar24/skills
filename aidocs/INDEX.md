@@ -15,6 +15,11 @@
 | 项目结构重构设计 | specs | [project-refactor-design.md](specs/project-refactor-design.md) |
 | 文档产出分级判定（Doc-Tier Gate） | specs | [文档产出分级判定.md](specs/文档产出分级判定.md) |
 
+## 需求文档
+| 文档 | 象限 | 文件 |
+| :--- | :--- | :--- |
+| 暂无文档 | reqs | 暂无 |
+
 ## Agent 行为规范
 | 文档 | 象限 | 文件 |
 | :--- | :--- | :--- |
@@ -46,4 +51,4 @@
 | 使用指南 | `guide/` | 面向开发者的 How-to 操作手册 [核心资产/按需] | 长周期 |
 | 归档 | `.archive/{象限}/` | 统一归档目录 | 历史版本、已完成计划、废弃文档 |
 
-> **文档产出分级（Doc-Tier Gate）**：L0 轻量（零文档，Bug 修复/单文件改动）→ L1 精简（specs 必产 + guide 按需，plan/tracking 对话内维护）→ L2 全量（五维全出，跨模块/多 Agent 并行/架构决策）。详见 [specs/文档产出分级判定.md](specs/文档产出分级判定.md)。
+> **文档产出分级（Doc-Tier Gate）**：L0 轻量（零文档，Bug 修复/单文件改动）→ L1 精简（specs 必产 + guide 按需，plan/tracking 对话内维护）→ L2 全量（五维全出，跨模块/多 Agent 并行/架构决策）。自 v3.2/v5.5 起，功能文档需携带 Agent-Friendly 最小头；L1 进度快照写入 specs 的 `Execution State`。详见 [specs/文档产出分级判定.md](specs/文档产出分级判定.md)。

@@ -28,3 +28,9 @@
 ### 应判定 L2 全量（五维全出）
 1. `/xy-feat 拆分子订单服务，涉及订单/支付/库存三模块`
 2. `/xy-feat 这个功能要用多子代理并行开发，走完整文档流程`
+
+## Agent-Friendly 恢复专项评测（v5.5）
+
+1. `/xy-feat 继续上次的 L1 功能开发` → 应先读取 specs 的 `Execution State`；缺失时先根据现有证据重建快照并向用户确认。
+2. `/xy-feat 设计文档批准后中断了，现在继续` → 应从 specs frontmatter 和 `Execution State` 恢复到阶段 2 或之后实际完成点。
+3. `/xy-feat 收尾时检查文档合规` → 应校验最小 frontmatter、生命周期状态、INDEX 链接和五象限覆盖。

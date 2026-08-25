@@ -1,13 +1,13 @@
 ---
 name: xy-feat
 description: "端到端功能开发工作流（需求澄清、档位判定、方案设计、规划分解、TDD/VDD 执行、验证、代码审查收尾、指南与合规整理）。优先调用 superpowers 技能链，未安装时按需降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发。"
-version: "5.4.0"
+version: "5.5.0"
 author: xiaoyu
 ---
 
 # xy-feat
 
-> **生命周期阶段**：稳定 (v5.4.0)
+> **生命周期阶段**：稳定 (v5.5.0)
 > **定位**：将 **档位判定 → 需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证完成 → 审查收尾 → 指南与归档** 串成一条端到端流水线。
 > **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**；若 superpowers 未安装（技能调用返回不可用），则按需读取 `references/` 下的对应降级文件执行内联流程（对应关系见"Superpowers 技能依赖"表）。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
@@ -68,7 +68,22 @@ author: xiaoyu
 
 - `<功能名>` 使用英文 kebab-case 或简明中文，描述功能模块本身，**不含日期**。
 - 同一功能的五维文档共享相同的 `<功能名>` 前缀。
+- 所有新建功能文档必须在 H1 前携带 `docs-layout-quadrant` 定义的 Agent-Friendly 最小头（`status`、`tier`、`domain`、`updated_at`；有来源时加 `source_workflow`）。
 - **活文档策略**：若同名文档已存在，优先**原地更新**（文档随代码演进）。若必须保留旧版，将旧版追加 `-archived` 后缀后移入统一归档目录 `aidocs/.archive/{象限}/`，保持主文件名不变。
+
+### 阶段编号映射
+
+`xy-feat` 阶段 6 对应 `docs-layout-quadrant` 的阶段 3-7：
+
+| xy-feat 阶段 | docs-layout-quadrant 阶段 |
+| :--- | :--- |
+| 阶段 0 档位判定 | 前置闸门 Doc-Tier Gate |
+| 阶段 6 指南产出 | 阶段 2 五维归类与模板落地 |
+| 阶段 6 状态/frontmatter 校验 | 阶段 3 机器可读文档头与生命周期管理 |
+| 阶段 6 INDEX 更新 | 阶段 4 建立知识索引 |
+| 阶段 6 归档移动与链接修复 | 阶段 5 移动文件与修复链接 |
+| 阶段 6 收尾验证 | 阶段 6 验证 |
+| 阶段 6 规则文件注入 | 阶段 7 注入结构说明 |
 
 ## 📖 标准工作流
 
@@ -143,6 +158,8 @@ author: xiaoyu
 
 **阶段出口**：规划自审通过（Spec 全覆盖、无占位符、跨任务类型/签名一致）并获用户确认。在送审时声明：“批准本计划即授权 AI 在阶段 3 执行本地 Git 原子提交 (`git commit -m ...`)”。
 
+**L1 可恢复性出口**：用户批准后，将已批准任务清单和当前阶段写入对应 `aidocs/specs/<功能名>-design.md` 的 `## Execution State` 节。该节只保留状态快照（阶段、任务状态、关键证据路径），不复制完整方案。
+
 ---
 
 ### 阶段 3：TDD / VDD 执行
@@ -172,6 +189,7 @@ author: xiaoyu
 - **实时追踪**（按档位）：L2 档主编排代理每确认完成一个任务卡片，立即将 `aidocs/tracking/<功能名>.md` 对应条目标记为 `✅`，并记录关键提交 hash；L1 档在对话内维护同一清单；L0 档不追踪。
 - **调试纪律**：遇到 Bug 先走根因调查（四阶段调试法），最多 3 次不同假设的重试，禁止猜测式修复。
 - **跨任务对齐**：开始下一个任务卡片前，重新查看 plan 文档（L2）或对话内设计上下文（L1），严防"文档写一套、代码写另一套"。
+- **L1 快照同步**：L1 档每次阶段切换或关键任务完成后，同步更新 specs 文档的 `## Execution State` 节；会话中断后新 Agent 必须先读取该节恢复进度，再继续执行。
 
 ---
 
@@ -193,6 +211,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 **执行要求**：
 - 所有任务卡片标记 `✅` 后，调用 `self-check-trinity` 依次执行 lint → typecheck → test，任一失败则修复后重试（最高 3 次）。
 - 验证命令必须**在当前消息中运行**，证据必须新鲜；禁止信任缓存结果；禁止只跑 lint 就声称"质量检查通过"。
+- L1/L2 档验证通过后，将最新状态、关键证据路径和 `status: delivered` 写入对应文档的 Agent-Friendly 头或 `Execution State` 节。
 - 验证未通过 → 回到阶段 3 走调试流程；全部通过 → 进入阶段 5。
 
 ---
@@ -225,8 +244,9 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
    - **L1 档**：**按需产出**——新组件/新 API/新工作流等有团队使用价值时写 guide；纯内部重构、无对外使用价值时跳过，避免空壳文档。
    - **L0 档**：不产出 guide。
 
-2. 通过技能调用 `docs-layout-quadrant` 完成文档合规整理与收尾归档，覆盖：
+2. 通过技能调用 `docs-layout-quadrant`（按上方“阶段编号映射”调用其阶段 3-7）完成文档合规整理与收尾归档，覆盖：
    - 命名规范校验（无日期前缀）
+   - Agent-Friendly frontmatter 与生命周期状态校验
    - 五维归类（含档位判定与弹性降级决策树复核）
    - **象限生命周期管理**（仅 L2 档有落盘文件时执行）：将已交付的 `aidocs/plan/<功能名>-plan.md` 追加 `-archived` 后缀移入 `aidocs/.archive/plan/`（若含内联 Checklist 则整体归档）；将已验收的 `aidocs/tracking/<功能名>.md` 按价值决策处理（含设计讨论/决策记录 → 追加 `-archived` 移入 `aidocs/.archive/tracking/`；纯勾选清单 → 经用户确认后删除）
    - `aidocs/INDEX.md` 索引更新（仅新增/修改落盘文档时）
@@ -240,6 +260,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 - **🚫 禁止日期前缀**：所有产出文档必须使用领域主体命名（`<功能名>-design.md`），**禁止** `YYYY-MM-DD-<功能名>-design.md` 格式。文档是知识图谱，不是流水账。
 - **阶段不可跳跃，档位决定文档量**：默认必须按 0→1→2→3→4→5→6 顺序执行。必须先审查收尾(阶段 5)后再归档文档(阶段 6)。档位判定只决定各阶段**文档产出量**（L0 零文档、L1 精简、L2 全量），**不跳过任何阶段流程**；若用户要求跳过某阶段，需明确告知风险并获得确认后方可跳过。
 - **档位判定先行**：阶段 0 必须完成档位判定并向用户说明后，才进入方案设计；禁止不判定直接全量五维产出（小任务浪费 token），也禁止不判定直接零文档（大任务知识流失）。
+- **L1 状态必须可恢复**：L1 档的 plan/tracking 不独立落盘，但阶段出口、任务状态变更和验证证据必须同步写入 specs 的 `## Execution State` 节；禁止只保留在易失对话历史中。
 - **🚫 禁止空壳文档**：L0 档不建任何 `aidocs/` 文件；L1 档被降级的 plan/tracking 一律对话内维护，**禁止**生成空白 plan.md/tracking.md 占位；guide 无团队使用价值时跳过。
 - **防止多版本命名冲突**：同名文档已存在时，默认原地更新（活文档）；需归档旧版时，追加 `-archived` 并移入 `aidocs/.archive/{象限}/`，**禁止**自动追加 `-v2`/`-v3` 后缀。
 - **Git 写操作需授权**：`git add`/`git commit`/`git push`/`git reset`/`git checkout --` 等写操作必须先获得用户授权（阶段 2 计划送审时可批量预授权阶段 3 本地原子提交）；未授权时禁止自动操作。
@@ -271,6 +292,24 @@ aidocs/guide/file-upload-guide.md       ← 面向开发者的 How-to（L2 必�
 ```
 
 ```markdown
+---
+status: approved
+tier: L1
+domain: 文件上传
+updated_at: 2026-08-25
+source_workflow: xy-feat
+---
+
+# 文件上传设计
+
+## Execution State
+
+当前阶段：阶段 3
+Task 1: ⏳ 创建上传接口测试
+证据路径：`tests/upload.test.ts`
+```
+
+```markdown
 # 标准追踪文件格式（主编排代理统一维护）
 # 状态总览
 创建日期：2026-07-15 | 当前阶段：阶段 3 | 模式：TDD/VDD
@@ -286,6 +325,11 @@ aidocs/guide/file-upload-guide.md       ← 面向开发者的 How-to（L2 必�
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v5.5.0** (2026-08-25):
+  - **跨会话可恢复**：L1 档新增 `Execution State` 快照出口，设计批准、任务完成、验证通过均同步写入 specs。
+  - **机器可读文档头**：所有新建功能文档统一携带 `status / tier / domain / updated_at`，必要时记录 `source_workflow`。
+  - **阶段映射显式化**：新增 xy-feat 阶段 6 与 docs-layout-quadrant 阶段 3-7 的映射表，消除调用歧义。
+  - 降级流程与触发评测集同步补强恢复、frontmatter 和 INDEX 校验用例。
 - **v5.4.0** (2026-08-21):
   - **文档产出分级接入（Doc-Tier Gate）**：与 docs-layout-quadrant v3.1.0 对齐，阶段 0 新增**档位判定**步骤（L0 轻量零文档 / L1 精简核心资产 / L2 全量五维），判定结果决定各阶段文档产出量：
     - **L0**：不建任何 `aidocs/` 文件，方案内联确认，plan/tracking 不落盘

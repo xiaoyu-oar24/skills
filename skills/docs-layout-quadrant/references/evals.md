@@ -39,3 +39,11 @@
 2. "更新 CLAUDE.md 里的项目介绍段落"（编辑标记块之外的普通内容，非结构注入）
 3. "帮我写一篇代码注释规范"（内容创作，非目录整理）
 4. "帮我调整 docs/ 下 VitePress 文档站的导航配置"（docs/ 非五维内容，不属于本技能边界）
+
+## Agent-Friendly 专项评测（v3.2）
+
+1. "帮我给 aidocs 新文档加一个机器可读状态头" → 应要求 `status/tier/domain/updated_at`，必要时加 `source_workflow`
+2. "设计文档已批准，接下来怎么标记？" → 应更新 `status: approved`，交付后使用 `delivered`
+3. "文档已经移入 .archive/specs 了，还要改什么？" → 应同步 `status: archived`
+4. "INDEX 里有个链接打不开" → 应执行相对链接完整性校验并修复
+5. "L1 的任务进度只在聊天记录里，新会话怎么继续？" → 应读取或补写 specs 的 `Execution State`

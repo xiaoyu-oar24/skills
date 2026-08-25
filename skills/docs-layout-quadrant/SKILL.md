@@ -1,7 +1,7 @@
 ---
 name: docs-layout-quadrant
 description: "文档五维布局（reqs / specs / plan / tracking / guide）与文档产出分级判定（L0 轻量零文档 / L1 精简核心资产 / L2 全量五维），以 aidocs/ 专属目录规整 AI 过程文档结构并向 AGENTS.md/CLAUDE.md 注入目录结构说明；支持将符合五维结构的旧版 docs/ 自动迁移至 aidocs/。被 xy-feat 工作流在指南产出与文档合规整理阶段（阶段 6）调用。核心原则：专属目录隔离、领域主体命名（禁用日期前缀）、核心资产 specs/ + guide/、plan/tracking 仅作脚手架按档产出、象限生命周期管理、知识索引导航、统一归档目录。TRIGGER when: 开始新功能需判定文档档位或整理文档结构、编写需求/设计文档或进度报告、整理混乱的 aidocs/ 或旧版 docs/ 目录、向规则文件注入或更新文档结构说明标记块、被 xy-feat 在指南产出与文档合规整理阶段（阶段 6）调用。SKIP: 对项目根目录 README.md 等全局配置文件的归类整理（向 CLAUDE.md / AGENTS.md 注入或更新结构标记块不在 SKIP 范围内）；纯文档瘦身/精炼/降低 Token 消耗（用 lean-docs）。"
-version: "3.1.0"
+version: "3.2.0"
 author: xiaoyu
 ---
 
@@ -179,7 +179,10 @@ author: xiaoyu
 
 > **核心资产**：`specs/` + `guide/` 为长期核心资产（L1 档必产 specs、guide 按需；L2 档全产）；`plan/` + `tracking/` 为开发脚手架，仅在 **L2 全量档**落盘，L1 档对话内维护不落盘。任何档位均不得产出空壳文档。
 
-### 阶段 3：象限生命周期管理
+### 阶段 3：机器可读文档头与生命周期管理
+
+**Agent-Friendly 最小头**：所有新建的 `aidocs/` 功能文档（`INDEX.md` 除外）必须在 H1 前携带 YAML frontmatter，用于跨会话状态恢复与机械校验：
+必填字段为 `status`、`tier`、`domain` 和 `updated_at`；有明确来源时加 `source_workflow`。状态必须随审批、交付和归档显式演进。执行阶段 3 或创建功能文档前，读取 `references/agent-friendly.md` 获取字段模板与状态语义。
 
 **使用工具**：目录浏览、命令行/终端（如 `git mv`）
 
@@ -197,7 +200,8 @@ author: xiaoyu
 3. **reqs/** — 扫描需求文档：
    - 功能已验收 → 保持原位（作为业务知识长期保留）
    - 需求已废弃（功能下线或被替代）→ 追加 `-archived` 后缀，移入 `aidocs/.archive/reqs/`
-4. **specs/ & guide/** — 作为长周期文档，保持原位，但检查内容是否过时
+4. **specs/ & guide/** — 作为长周期文档，保持原位，但检查内容是否过时。
+5. **frontmatter 校验** — 检查 `status`、`tier` 和 `updated_at` 与实际路径及生命周期一致；旧文档缺失字段时不强制批量改写，可在下次实质性修改时补齐。
 
 ### 阶段 4：建立知识索引
 
@@ -226,6 +230,13 @@ author: xiaoyu
 ```
 
 每次新增/删除/重命名文档后，**必须同步更新** `aidocs/INDEX.md`。归档文档移入 `aidocs/.archive/` 时，若有参考价值也需在 INDEX 的"📦 归档文档"小节中体现。
+
+**索引完整性校验**：
+
+1. `INDEX.md` 中每个 Markdown 相对链接必须指向存在的文件。
+2. 五个象限目录中每个非归档功能文档都必须在 `INDEX.md` 至少出现一次。
+3. 更新索引时按象限统计现存非归档文档数量；若某象限为空，写明"暂无文档"，禁止让读者从缺失小节猜测目录是否为空。
+4. 无法执行脚本校验时，至少用文本搜索核对链接路径和遗漏文件，并在完成汇报中说明校验方式。
 
 > **归档小节规模控制**：`📦 归档文档` 小节只保留分类概括或极少数仍有重大参考价值的历史链接，**总行数 ≤ 5 行**，禁止展开长列表（紧凑化重构由 `lean-docs` 阶段 4 执行）。
 
@@ -261,7 +272,7 @@ author: xiaoyu
 **注入内容模板**：
 
 ```markdown
-<!-- docs-layout-quadrant:start (v3.1) -->
+<!-- docs-layout-quadrant:start (v3.2) -->
 ## 📁 aidocs/ 目录结构
 
 本项目采用五维文档布局，由 `docs-layout-quadrant` 技能维护。AI 过程文档统一存放在 `aidocs/` 专属目录，与 `docs/`（文档站/产品文档等其他用途）隔离。AI 助手在读取/创建/修改文档时请遵循此结构。
@@ -288,6 +299,11 @@ author: xiaoyu
 - 文档间引用使用相对路径（如 `../specs/xxx.md`），禁止绝对路径
 - 归档文件统一追加 `-archived` 后缀，移入 `aidocs/.archive/{象限}/`
 
+### Agent-Friendly 文档头
+- 新建功能文档必须在 H1 前携带最小 YAML frontmatter：`status`、`tier`、`domain`、`updated_at`；有来源时加 `source_workflow`
+- `status` 使用 `draft / approved / delivered / archived`；归档后必须显式更新为 `archived`
+- `INDEX.md` 必须校验相对链接有效，且覆盖五个象限的全部非归档功能文档
+
 ### 与 docs/ 的边界
 - `docs/` 若存在，归项目自由使用（文档站、产品文档等），本布局不管理、不移动其中内容
 - 旧版五维 `docs/` 由 `docs-layout-quadrant` 技能的自动迁移规则（阶段 0）一次性迁移至 `aidocs/`
@@ -309,8 +325,9 @@ author: xiaoyu
 - **必须使用 `git mv` 保留 Git 历史**：移动已被 Git 跟踪的文件时必须使用 `git mv` 而非普通 `mv`，以完整保留版本变更历史；未跟踪文件（如 `aidocs/` 被 `.gitignore` 忽略时）退化为普通 `mv` 并向用户说明
 - **删除/批量移动前需确认**：任何删除或批量移动、重命名文件的操作，必须先列出受影响文件清单并获得用户确认后方可执行（阶段 0 的整体迁移同样适用）
 - **🚫 禁止空壳文档**：经档位判定跳过某象限时，禁止强行生成空白/空壳 `.md` 文件占位。L0 档不建任何文档；L1 档被跳过的象限（plan/tracking）内容对话内维护；降级内容必须使用标准内联模板写入宿主文档
+- **L1 状态必须可恢复**：L1 的 plan/tracking 虽不独立落盘，但阶段出口、任务清单变更和最终结果必须写入对应 `aidocs/specs/<功能名>-design.md` 的 `## Execution State` 节；禁止只保留在易失对话历史中
 - **档位判定先行且不可跳过**：任何产出新文档的调用必须先完成前置闸门档位判定并向用户说明档位；禁止不判定直接全量五维产出（L0 任务走全量流程 = 资源浪费），也禁止不判定直接零文档（L2 任务零文档 = 知识流失）
-- **索引同步不可跳过**：任何文档增删改后，必须同步更新 `aidocs/INDEX.md`，保持导航网最新
+- **索引同步不可跳过**：任何文档增删改后，必须同步更新 `aidocs/INDEX.md`，保持导航网最新并完成相对链接完整性校验
 
 ## 📝 模板与范例
 
@@ -438,6 +455,11 @@ INDEX.md 导航：
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v3.2.0** (2026-08-25):
+  - **Agent-Friendly 最小头**：新增 `status / tier / domain / updated_at / source_workflow` 约定，生命周期状态不再依赖目录位置推断。
+  - **L1 可恢复性**：L1 档的 plan/tracking 对话内维护时，必须在 specs 的 `Execution State` 节保留阶段与任务快照。
+  - **索引完整性校验**：INDEX 相对链接、五象限覆盖和空象限说明纳入阶段 4 收尾校验。
+  - 注入标记块升级至 v3.2，同步补充 Agent-Friendly 文档头说明。
 - **v3.1.0** (2026-08-21):
   - **新增前置闸门：文档产出分级判定（Doc-Tier Gate）**：核心思想升级为"文档资产有层级"——`specs/`（契约防腐）+ `guide/`（团队资产）为长期核心资产；`plan/` + `tracking/` 为开发脚手架。所有"产出新文档"类调用必须先判定档位再产出：
     - **L0 轻量（零文档）**：Bug 修复、单文件小改动、配置/样式微调 → 不建任何象限文件，决策内联 commit/注释

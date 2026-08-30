@@ -1,13 +1,13 @@
 ---
 name: xy-feat
 description: "端到端功能开发工作流（需求澄清、档位判定、方案设计、规划分解、TDD/VDD 执行、验证、代码审查收尾、指南与合规整理）。优先调用 superpowers 技能链，未安装时按需降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发。"
-version: "5.5.0"
+version: "5.6.0"
 author: xiaoyu
 ---
 
 # xy-feat
 
-> **生命周期阶段**：稳定 (v5.5.0)
+> **生命周期阶段**：稳定 (v5.6.0)
 > **定位**：将 **档位判定 → 需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证完成 → 审查收尾 → 指南与归档** 串成一条端到端流水线。
 > **双模执行**：每个阶段**优先通过技能调用机制调用 superpowers 对应技能**；若 superpowers 未安装（技能调用返回不可用），则按需读取 `references/` 下的对应降级文件执行内联流程（对应关系见"Superpowers 技能依赖"表）。
 > **核心思想**：文档是知识图谱，不是 Git Commit 历史。每个阶段的产出文档随代码演进而演进，而非每次修改新建文件。
@@ -50,6 +50,22 @@ author: xiaoyu
 | :--- | :--- | :--- |
 | `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test 三道质量关卡 |
 | `docs-layout-quadrant` | 阶段 0/6 | 阶段 0 档位判定（Doc-Tier Gate）；阶段 6 使用指南产出、文档合规整理与归档、规则文件注入（AGENTS.md/CLAUDE.md）— 含三档分级模型与弹性降级决策树 |
+
+### 可选增强技能族（ponytail，独立安装，非必需）
+
+> 以下技能属于独立技能族 ponytail（与 superpowers 无关），为**可选增强**而非闸门：未安装或不可用时，对应接驳点静默跳过并在阶段汇报中注明一行，不阻塞流程、不视为违规。
+
+| 技能 | 阶段 | 用途 | 不可用时 |
+| :--- | :--- | :--- | :--- |
+| `ponytail`（lite 档借用） | 阶段 1 | Draft 送审前对新增组件/依赖/抽象执行 YAGNI 阶梯快查，各附一行"更懒替代" | 跳过该步骤 |
+| `ponytail`（阶梯规则） | 阶段 3 | 实现风格：复用现有 helper/标准库/平台原生/已有依赖优先，最短可行 diff，`ponytail:` 注释标记有意识简化 | 风格条款不生效 |
+| `ponytail-review` | 阶段 5 | 过度工程专项审查 pass（一行一条，并入现有分级处置） | 跳过该 pass |
+| `ponytail-debt` | 阶段 5 | 收割 `ponytail:` 注释为债务清单，写入 specs 或 commit message | 跳过该收割 |
+
+**优先级宪法**（ponytail 与本工作流共存的裁定）：
+1. **工作流纪律优先**：TDD Iron Law、阶段出口、文档档位（Doc-Tier Gate）、Git 授权闸均不受 ponytail 豁免，仲裁依据为 ponytail 自身条款"Never simplify away: anything explicitly requested"。
+2. **借档即还**：阶段 1 借用 `ponytail lite` 后，Draft 送审完成即执行 `stop ponytail`，持久模式禁止跨越阶段边界（调用环有界）。
+3. **不可用即跳过**：ponytail 族接驳点均为增强性质，未安装时降级为跳过，无需降级文件。
 
 - **工具授权**：用户调用本工作流即视为明确授权进行文件读写、目录创建。
 
@@ -131,6 +147,8 @@ author: xiaoyu
 
 > **优先**：通过技能调用 `brainstorming`。
 > **降级**：读取 `references/fallback-init-design.md`，执行一站式 Draft 呈现审批流程（需求澄清 → 方案对比 → 结构化 Draft 一次性提交审批 → 撰写设计文档 → 自审）。
+>
+> **可选增强（ponytail 借档）**：Draft 组装完成后、送审前，若 `ponytail` 可用，以 lite 档对 Draft 中每个新增组件/依赖/抽象执行 YAGNI 阶梯快查（需要存在吗 → 库里已有 → 标准库 → 平台原生 → 已装依赖），各附一行"更懒替代"随 Draft 一并送用户裁决；**送审完成后立即 `stop ponytail`**。不可用时跳过。
 
 **必须产出**（按档位）：
 - **L0 轻量档**：不产出设计文档，方案直接内联呈现给用户确认后进入编码。
@@ -190,6 +208,7 @@ author: xiaoyu
 - **调试纪律**：遇到 Bug 先走根因调查（四阶段调试法），最多 3 次不同假设的重试，禁止猜测式修复。
 - **跨任务对齐**：开始下一个任务卡片前，重新查看 plan 文档（L2）或对话内设计上下文（L1），严防"文档写一套、代码写另一套"。
 - **L1 快照同步**：L1 档每次阶段切换或关键任务完成后，同步更新 specs 文档的 `## Execution State` 节；会话中断后新 Agent 必须先读取该节恢复进度，再继续执行。
+- **实现风格（可选增强）**：若 `ponytail` 可用，实现遵循 YAGNI 阶梯——优先复用现有 helper/标准库/平台原生/已有依赖，最短可行 diff；有意识简化（已知天花板的取巧）以 `ponytail:` 注释标记。TDD Iron Law 与任务卡片 Expected 产出不受其豁免。
 
 ---
 
@@ -230,6 +249,7 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
 
 **核心流程**：
 - 审查范围用 `git merge-base` 确定 `BASE_SHA..HEAD_SHA`；审查问题按 Critical（立即修复并重走 3→4→5）/ Important（修复后继续）/ Minor（记录）分级处理。
+- **过度工程专项（可选增强）**：常规审查后，若 `ponytail-review` 可用则追加一次专项 pass（只报过度工程，一行一条），发现项并入上述分级处置；随后若 `ponytail-debt` 可用，收割代码中的 `ponytail:` 注释为债务清单，写入 specs 的『已知简化与升级路径』节（L1/L2 档）或 commit message（L0 档）。不可用时跳过。
 - 收尾前进行测试检测：若 `git diff BASE_SHA..HEAD_SHA` 自阶段 4 后无任何变动，跳过重复全量测试并沿用阶段 4 凭证；如有变动则重新运行全量测试确认通过。
 - 收尾四选项：`1 本地合并` / `2 推送并创建 PR` / `3 保持分支` / `4 放弃`；选项 4 必须获得用户输入 `discard` 确认后才可执行。
 
@@ -325,6 +345,9 @@ Task 1: ⏳ 创建上传接口测试
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v5.6.0** (2026-08-30):
+  - **ponytail 可选增强整合**：新增独立增强技能族 ponytail——阶段 1 借 `ponytail lite` 做 Draft YAGNI 快查、阶段 3 引入实现风格阶梯与 `ponytail:` 简化标记、阶段 5 追加 `ponytail-review` 过度工程专项审查与 `ponytail-debt` 债务收割。全部为可选增强，未安装时静默跳过，不新增护栏与降级文件。
+  - **优先级宪法**：工作流纪律（TDD Iron Law、阶段出口、档位、Git 授权闸）优先于 ponytail；阶段 1 借档即还（送审后 `stop ponytail`），持久模式不跨阶段边界。
 - **v5.5.0** (2026-08-25):
   - **跨会话可恢复**：L1 档新增 `Execution State` 快照出口，设计批准、任务完成、验证通过均同步写入 specs。
   - **机器可读文档头**：所有新建功能文档统一携带 `status / tier / domain / updated_at`，必要时记录 `source_workflow`。

@@ -9,4 +9,9 @@ AGENTS.md
 pack.sh
 superpowers-main/
 .reasonix
-
+.claude
+.code-review-graph
+opencode.json
+.claudeignore
+.codexignore
+.cursorignore

@@ -6,11 +6,12 @@
 
 | 技能 | 描述 |
 |------|------|
-| `xy-feat` | 端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证 → 审查收尾 → 指南与合规整理），优先调用 superpowers，未安装时降级为内联流程 |
+| `xy-feat` | 端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证 → 审查收尾 → 指南与合规整理），优先调用 superpowers，未安装时降级为内联流程；另整合 ponytail 可选增强（不可用时跳过） |
 | `docs-layout-quadrant` | 文档五维布局（reqs / specs / plan / tracking / guide），以 aidocs/ 专属目录规整 AI 过程文档，支持旧版 docs/ 自动迁移与弹性降级（按需判定 reqs/tracking），含决策树、内联模板与规则文件注入 |
 | `lean-docs` | 文档瘦身与检索治理：归档过期 plan/tracking、精简活文档流水账、紧凑 INDEX 索引、多 AI 工具检索阻断，降低 Token 消耗 |
 | `self-check-trinity` | 强制在交付代码前执行 lint → typecheck → test 三道质量检查 |
 | `uniapp-wechat-scaffold` | 基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序脚手架生成器 |
+| `audit-vue-biz-component` | 审计基于 Element Plus 二次封装的 Vue3 B端业务组件（四维评分报告，只读不改码） |
 | `unified-api-response` | 强制所有 JSON API 返回统一的 `{ code, message, data }` 响应结构 |
 | `api-name-drift-defense` | 防御第三方库版本升级导致的 API 重命名/移除问题 |
 | `health-probe-discipline` | 服务探针端点（health/readiness/liveness）规范约束，支持 Node/Java/Python 多技术栈 |
@@ -27,7 +28,6 @@
 │   ├── specs/                     # 设计规范 [核心资产]（长周期，契约防腐）
 │   │   ├── 任务边界自律守则.md
 │   │   ├── 技能审计报告-深度综合版.md
-│   │   ├── xy-feat工作流优化方案.md
 │   │   ├── 文档产出分级判定.md
 │   │   └── ...
 │   ├── plan/                      # 执行计划 [L2 全量档落盘]（短周期，脚手架）
@@ -37,16 +37,18 @@
 │       ├── superpowers.md
 │       └── ...
 ├── skills/                        # 技能容器目录
-│   ├── xy-feat/                   # 功能开发工作流 (v5.4.0)
+│   ├── xy-feat/                   # 功能开发工作流 (v5.6.0)
 │   ├── uniapp-wechat-scaffold/    # UniApp 脚手架
+│   ├── audit-vue-biz-component/   # Vue3 B端业务组件审计
 │   ├── self-check-trinity/        # 三合一质量检查
 │   ├── unified-api-response/      # 统一 API 响应
 │   ├── api-name-drift-defense/    # API 漂移防御
-│   ├── docs-layout-quadrant/      # 文档五维布局 (v3.1.0)
-│   ├── lean-docs/                 # 文档瘦身与检索治理 (v1.2.1)
+│   ├── docs-layout-quadrant/      # 文档五维布局 (v3.2.0)
+│   ├── lean-docs/                 # 文档瘦身与检索治理 (v1.3.0)
 │   ├── health-probe-discipline/   # 探针规范
 │   ├── z-paging-best-practices/   # z-paging 分页最佳实践
 │   └── code-search-discipline/    # 代码搜索纪律
+├── superpowers-main/              # superpowers 技能集源码副本（xy-feat 优先调用链来源）
 ├── README.md
 ├── CLAUDE.md
 └── AGENTS.md

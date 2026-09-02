@@ -34,3 +34,9 @@
 1. `/xy-feat 继续上次的 L1 功能开发` → 应先读取 specs 的 `Execution State`；缺失时先根据现有证据重建快照并向用户确认。
 2. `/xy-feat 设计文档批准后中断了，现在继续` → 应从 specs frontmatter 和 `Execution State` 恢复到阶段 2 或之后实际完成点。
 3. `/xy-feat 收尾时检查文档合规` → 应校验最小 frontmatter、生命周期状态、INDEX 链接和五象限覆盖。
+
+## 接口契约拆分专项评测（v5.7）
+
+1. `/xy-feat 实现供应商准入管理，含 6 个接口，接口契约部分设计文档超过 400 行` → 阶段 6 应调用 `doc-craftsman` 将接口契约拆分为 `aidocs/specs/接口文档/supplier/` 原子文件并维护三级索引，design.md 保留架构决策与接口总览链接。
+2. `/xy-feat 实现一个单接口小功能` → 阶段 6 接口契约未超阈值，不触发拆分，跳过 `doc-craftsman`。
+3. `/xy-feat 接口文档很多但 doc-craftsman 技能不可用` → 阶段 6 应跳过拆分并在汇报中注明一行，不视为违规。

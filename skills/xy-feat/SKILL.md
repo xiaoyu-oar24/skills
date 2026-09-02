@@ -1,7 +1,7 @@
 ---
 name: xy-feat
-description: "端到端功能开发工作流（需求澄清、档位判定、方案设计、规划分解、TDD/VDD 执行、验证、代码审查收尾、指南与合规整理）。优先调用 superpowers 技能链，未安装时按需降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发。"
-version: "5.6.0"
+description: "端到端功能开发工作流（需求澄清、档位判定、方案设计、规划分解、TDD/VDD 执行、验证、代码审查收尾、指南与合规整理，指南阶段可选调用 doc-craftsman 拆分接口契约）。优先调用 superpowers 技能链，未安装时按需降级为 references/ 内联流程。TRIGGER when: 用户显式输入 '/xy-feat' 时激活。SKIP: 其他任何场景均不触发。"
+version: "5.7.0"
 author: xiaoyu
 ---
 
@@ -50,6 +50,7 @@ author: xiaoyu
 | :--- | :--- | :--- |
 | `self-check-trinity` | 阶段 4 | Lint → Typecheck → Test 三道质量关卡 |
 | `docs-layout-quadrant` | 阶段 0/6 | 阶段 0 档位判定（Doc-Tier Gate）；阶段 6 使用指南产出、文档合规整理与归档、规则文件注入（AGENTS.md/CLAUDE.md）— 含三档分级模型与弹性降级决策树 |
+| `doc-craftsman` | 阶段 6 | （可选增强）接口契约原子化拆分：design/guide 中接口契约 >300 行且含 ≥2 个独立接口时，拆分为 `aidocs/specs/接口文档/` 子体系并维护三级索引；不可用时跳过并在汇报注明 |
 
 ### 可选增强技能族（ponytail，独立安装，非必需）
 
@@ -264,6 +265,8 @@ NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE
    - **L1 档**：**按需产出**——新组件/新 API/新工作流等有团队使用价值时写 guide；纯内部重构、无对外使用价值时跳过，避免空壳文档。
    - **L0 档**：不产出 guide。
 
+1.5. **接口契约原子化拆分（可选增强）**：若阶段 1 的 `specs/<功能名>-design.md` 或步骤 1 的 guide 中接口契约部分 >300 行且含 ≥2 个独立接口，调用 `doc-craftsman` 将接口契约拆分为 `aidocs/specs/接口文档/{domain}/` 原子文件（七节契约模板）并维护三级索引（域总索引 → 模块子索引 → 原子文件）；`design.md` / `guide.md` 保留架构决策与接口总览链接，不复制接口细节。`doc-craftsman` 不可用时跳过并在阶段汇报中注明一行，不视为违规。
+
 2. 通过技能调用 `docs-layout-quadrant`（按上方“阶段编号映射”调用其阶段 3-7）完成文档合规整理与收尾归档，覆盖：
    - 命名规范校验（无日期前缀）
    - Agent-Friendly frontmatter 与生命周期状态校验
@@ -345,6 +348,8 @@ Task 1: ⏳ 创建上传接口测试
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v5.7.0** (2026-09-01):
+  - **接口契约原子化拆分（可选增强）**：阶段 6 新增可选接驳 `doc-craftsman`——design/guide 中接口契约部分 >300 行且含 ≥2 个独立接口时，拆分为 `aidocs/specs/接口文档/{domain}/` 原子文件并维护三级索引，design/guide 保留架构决策与接口总览链接；`doc-craftsman` 不可用时跳过不视为违规（对齐 docs-layout-quadrant v3.3 的 specs 子结构放行）。
 - **v5.6.0** (2026-08-30):
   - **ponytail 可选增强整合**：新增独立增强技能族 ponytail——阶段 1 借 `ponytail lite` 做 Draft YAGNI 快查、阶段 3 引入实现风格阶梯与 `ponytail:` 简化标记、阶段 5 追加 `ponytail-review` 过度工程专项审查与 `ponytail-debt` 债务收割。全部为可选增强，未安装时静默跳过，不新增护栏与降级文件。
   - **优先级宪法**：工作流纪律（TDD Iron Law、阶段出口、档位、Git 授权闸）优先于 ponytail；阶段 1 借档即还（送审后 `stop ponytail`），持久模式不跨阶段边界。

@@ -1,7 +1,7 @@
 ---
 name: "lean-docs"
-description: "文档体系瘦身与检索治理技能：归档过期的 plan/tracking、精简活文档冗余流水账、多子特性交付完成后的特性群 SSOT 聚合（提炼唯一架构规范与操作指南并归档散碎 design/guide）、重构紧凑版 INDEX.md 索引，并在各 AI 工具的忽略配置中阻断检索噪音，极致降低 Token 消耗。TRIGGER when: 用户输入 /lean-docs、提及精简文档/文档瘦身/降低文档 Token 消耗/收敛已完成的计划与追踪堆积/多子特性交付完成需聚合文档为单一真理源。SKIP: 新建功能或进行中的需求开发（用 xy-feat，其阶段 0 会做 L0/L1/L2 档位判定）；仅做五维结构归类、命名校验、规则文件注入（用 docs-layout-quadrant）。"
-version: "1.3.0"
+description: "文档体系瘦身与检索治理技能：归档过期的 plan/tracking、精简活文档冗余流水账、多子特性交付完成后的特性群 SSOT 聚合（提炼唯一架构规范与操作指南并归档散碎 design/guide）、重构紧凑版 INDEX.md 索引，并在各 AI 工具的忽略配置中阻断检索噪音，极致降低 Token 消耗。TRIGGER when: 用户输入 /lean-docs、提及精简文档/文档瘦身/降低文档 Token 消耗/收敛已完成的计划与追踪堆积/多子特性交付完成需聚合文档为单一真理源。SKIP: 新建功能或进行中的需求开发（用 xy-feat，其阶段 0 会做 L0/L1/L2 档位判定）；仅做五维结构归类、命名校验、规则文件注入（用 docs-layout-quadrant）；多主题/多接口混杂的巨石文档拆解（用 doc-craftsman，本技能只做内容冗余精炼）。"
+version: "1.4.1"
 author: "xiaoyu"
 ---
 
@@ -20,17 +20,28 @@ author: "xiaoyu"
 - **SKIP**（与相邻技能硬性分流）:
   - 正在进行中的业务功能开发任务（应使用 `xy-feat`，其阶段 0 会做档位判定：L0 轻量/L1 精简/L2 全量）
   - 仅做五维结构归类、命名规范校验、规则文件注入（应使用 `docs-layout-quadrant`）
+  - **多主题/多接口混杂的巨石文档拆解**（应使用 `doc-craftsman`：本技能只处理内容冗余精炼，不处理结构混杂拆解）
   - 对代码源码或配置文件的直接修改
 
 ## ⚙️ 依赖与先决条件
 
 - 项目存在 `aidocs/` 目录且遵循五维布局规范（若仍为旧版 `docs/`，先调用 `docs-layout-quadrant` 执行阶段 0 迁移）。
-- **版本对齐**：依赖 `docs-layout-quadrant ≥ v3.1.0`（五维 `aidocs/` 布局、统一归档目录 `aidocs/.archive/{象限}/`、文档产出分级判定 Doc-Tier Gate——L0 轻量/L1 精简/L2 全量）。`docs-layout-quadrant` 升级主版本时，需同步复核本技能对生命周期与归档规则的引用。
+- **版本对齐**：依赖 `docs-layout-quadrant ≥ v3.3.0`（五维 `aidocs/` 布局、统一归档目录 `aidocs/.archive/{象限}/`、文档产出分级判定 Doc-Tier Gate——L0 轻量/L1 精简/L2 全量、`specs/接口文档/` 子体系放行（阶段 2.5）——阶段 3 的 SSOT 接口链接规则依赖此项）。`docs-layout-quadrant` 升级主版本时，需同步复核本技能对生命周期与归档规则的引用。
 - **特性群治理标准**（可选参考）：聚合收敛场景下，优先遵循仓库内 `aidocs/guide/lean-docs特性群治理标准.md` 的四大收敛维度与 5 步 SOP（SSOT 提炼、归档、索引闭环）；若该文件不存在，按本技能阶段 3 的内联流程执行。
 - Git 版本控制正常工作（运行 `git --version` 确认，用于安全追踪与回滚）。
 - 运行环境假设为类 Unix 终端（支持 `git mv`、文件搜索工具）。
 
 ## 📖 标准工作流
+
+### 前置分流闸：内容冗余 vs 结构混杂（v1.4）
+
+> 与 `doc-craftsman` 的硬性边界。本技能只处理**内容冗余**（流水账、废弃方案、过程记录、重复结论）；**结构混杂**（同一文件堆砌多个独立接口/主题）的拆解归 `doc-craftsman`。
+
+1. 读取目标文档，判定冗余类型：
+   - **内容冗余**（单一主题但信息重复、过程冗长）→ 本技能精炼。
+   - **结构混杂**（≥2 个独立接口/主题且内容有效，通常 >300 行）→ 转 `doc-craftsman` 拆解。
+   - **两者兼具** → 先本技能精炼剥离过程，剩余结构混杂再转 `doc-craftsman`。
+2. 生命周期归档类任务不经过此闸门（直接走阶段 1 委托 `docs-layout-quadrant`）。
 
 ### 阶段 1：过期生命周期归档与清理（委托执行，最大收益点）
 
@@ -84,7 +95,8 @@ author: "xiaoyu"
 3. **提炼并落地 SSOT 核心资产**：
    - **Why 维度**：将多个 `specs/*-design.md` 提炼为唯一的 `aidocs/specs/{领域}全链路架构与切流规范.md`——架构总览与核心设计原则、请求层与鉴权分流、存储与状态模型（Storage & Store）、核心时序与交互流程、领域基础能力与数据模型、常见排错与 FAQ；
    - **How 维度**：将多个 `guide/*-guide.md` 提炼为唯一的 `aidocs/guide/{领域}开发与联调操作指南.md`——统一调用与环境规范、核心 API 封装调用代码范例、端到端全链路人工联调验收清单（Checklist）、开发者高频问题 FAQ；
-   - **时态一致性**：新生成的规范中，必须将"待实施"、"候选方案"等中途推导状态修正为"已生效/当前实现"。
+   - **时态一致性**：新生成的规范中，必须将"待实施"、"候选方案"等中途推导状态修正为"已生效/当前实现"；
+   - **接口细节不复制**：若该领域存在 `aidocs/specs/接口文档/{domain}/` 子体系（`doc-craftsman` 维护），SSOT 的接口清单节**链接**到 `接口文档/{domain}/INDEX.md`，禁止将原子接口内容复制进 SSOT——SSOT（领域级 Why/How 聚合）与原子接口文件（单接口契约）正交，双写必然腐化。
 4. **过程文档归档与长期活文档重构**：
    - 原 `*-design.md` / `*-guide.md` 追加 `-archived` 后缀并移入 `aidocs/.archive/{象限}/`（归档动作委托 `docs-layout-quadrant` 阶段 3，本技能不重复实现）；
    - 长期规划收敛为「阶段达成全景图」+「全量资产处置总表」，剔除讨论流水；问题清单仅保留极简真实待办（TODO）+「决策-依据」闭环矩阵表。
@@ -142,6 +154,7 @@ author: "xiaoyu"
 - **归档规则单一来源**：生命周期归档的判定与执行统一由 `docs-layout-quadrant` 阶段 3 负责，本技能仅调用、不重复实现归档逻辑。
 - **必须使用 `git mv` 保留历史**：移动文件至归档目录时，必须使用 `git mv` 保持 Git 版本追溯历史完整。
 - **索引与归档强一致**：归档文件后必须同步更新 `aidocs/INDEX.md`，禁止产生死链或遗留孤岛文档。
+- **🚫 结构混杂转拆解**：多主题/多接口混杂的大文档（>300 行且 ≥2 独立接口/主题）拆解归 `doc-craftsman`，本技能只精炼内容冗余；禁止把"拆解"当"精炼"执行，两者兼具时先精炼再转拆。
 
 ## 📝 模板与范例
 
@@ -190,21 +203,31 @@ author: "xiaoyu"
 > 本文件是 aidocs/ 目录的全局导航入口，按业务领域组织。总览最新事实，历史过程已归档。
 
 ## 用户与认证
-| 需求 (What) | 设计 (Why) | 指南 (How) |
+| 文档 | 象限 | 文件 |
 | :--- | :--- | :--- |
-| [用户需求](reqs/user-req.md) | [认证设计](specs/auth-design.md) | [接入指南](guide/auth-guide.md) |
+| 用户需求 | reqs | [user-req.md](reqs/user-req.md) |
+| 认证设计 | specs | [auth-design.md](specs/auth-design.md) |
+| 接入指南 | guide | [auth-guide.md](guide/auth-guide.md) |
 
 ## 支付中心
-| 需求 (What) | 设计 (Why) | 指南 (How) |
+| 文档 | 象限 | 文件 |
 | :--- | :--- | :--- |
-| [支付需求](reqs/pay-req.md) | [网关架构](specs/pay-gateway.md) | [对接手册](guide/pay-guide.md) |
+| 支付需求 | reqs | [pay-req.md](reqs/pay-req.md) |
+| 网关架构 | specs | [pay-gateway.md](specs/pay-gateway.md) |
+| 对接手册 | guide | [pay-guide.md](guide/pay-guide.md) |
 
-## 📦 历史归档
+## 📦 归档文档
 - 已归档 12 篇已交付 Plan 与历史追踪（统一存放在 `aidocs/.archive/`，不占用主索引）。
 ```
 
 ## 📜 版本变更历史 (Changelog)
 
+- **v1.4.1** (2026-09-02):
+  - **版本依赖升级**：`docs-layout-quadrant ≥ v3.1.0` 升至 `≥ v3.3.0`——阶段 3 的「SSOT 接口细节不复制」规则依赖其阶段 2.5 对 `specs/接口文档/` 子体系的放行。
+  - **索引模板格式对齐**：`<Good>` 示例的 INDEX 表格列统一为 `docs-layout-quadrant` 阶段 4 的「文档 / 象限 / 文件」格式，归档小节名对齐为「📦 归档文档」，消除两技能 INDEX 格式双标准。
+- **v1.4.0** (2026-09-01):
+  - **与 doc-craftsman 硬性分流**：新增前置分流闸——内容冗余（流水账/废弃方案/重复结论）归本技能精炼，结构混杂（≥2 独立接口/主题的巨石文档）转 `doc-craftsman` 拆解；两者兼具先精炼再转拆。SKIP 与护栏同步补充"结构混杂转拆解"条款（护栏总数 8 条）。
+  - **SSOT 接口细节不复制**：阶段 3 聚合时若领域存在 `specs/接口文档/` 子体系，SSOT 接口清单节链接到 `接口文档/{domain}/INDEX.md`，禁止复制原子接口内容（与 doc-craftsman 子体系正交）。
 - **v1.3.0** (2026-08-22):
   - **新增特性群 SSOT 聚合治理阶段（阶段 3）**：对齐 `aidocs/guide/lean-docs特性群治理标准.md` v1.3.0，支持将同一业务领域下多份已交付的 `*-design.md` / `*-guide.md` 聚合收敛为唯一单一真理源（Why 维度 `specs/{领域}全链路架构与切流规范.md` + How 维度 `guide/{领域}开发与联调操作指南.md`），散碎过程文档退火归档，长期规划与问题清单重构。
   - **新增 Dry-Run Gate 强制闸**：特性群聚合必须先输出治理提案（新建/合并 SSOT、精简重构、归档清单）获用户确认后才可执行，严禁静默覆盖。

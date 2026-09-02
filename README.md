@@ -7,8 +7,9 @@
 | 技能 | 描述 |
 |------|------|
 | `xy-feat` | 端到端功能开发工作流（需求澄清 → 方案设计 → 规划分解 → TDD/VDD 执行 → 验证 → 审查收尾 → 指南与合规整理），优先调用 superpowers，未安装时降级为内联流程；另整合 ponytail 可选增强（不可用时跳过） |
-| `docs-layout-quadrant` | 文档五维布局（reqs / specs / plan / tracking / guide），以 aidocs/ 专属目录规整 AI 过程文档，支持旧版 docs/ 自动迁移与弹性降级（按需判定 reqs/tracking），含决策树、内联模板与规则文件注入 |
-| `lean-docs` | 文档瘦身与检索治理：归档过期 plan/tracking、精简活文档流水账、紧凑 INDEX 索引、多 AI 工具检索阻断，降低 Token 消耗 |
+| `docs-layout-quadrant` | 文档五维布局（reqs / specs / plan / tracking / guide）与产出分级（L0/L1/L2 Doc-Tier Gate），以 aidocs/ 专属目录规整 AI 过程文档，支持旧版 docs/ 自动迁移、弹性降级与规则文件注入 |
+| `lean-docs` | 文档瘦身与检索治理：归档过期 plan/tracking、特性群 SSOT 聚合、精简活文档流水账、紧凑 INDEX 索引、多 AI 工具检索阻断，降低 Token 消耗 |
+| `doc-craftsman` | 结构化文档内容契约与接口文档原子化：One API One File 原子文件 + Hub-and-Spoke 三级索引（域总索引、模块子索引、原子文件）与共享约定下沉，支持编写接口契约、架构规范、业务需求、操作指南，并拆解混杂多主题的巨石文档、自愈相对路径链接 |
 | `self-check-trinity` | 强制在交付代码前执行 lint → typecheck → test 三道质量检查 |
 | `uniapp-wechat-scaffold` | 基于 UniApp + Vue 3 + TypeScript + Pinia + uv-ui 的微信小程序脚手架生成器 |
 | `audit-vue-biz-component` | 审计基于 Element Plus 二次封装的 Vue3 B端业务组件（四维评分报告，只读不改码） |
@@ -37,14 +38,15 @@
 │       ├── superpowers.md
 │       └── ...
 ├── skills/                        # 技能容器目录
-│   ├── xy-feat/                   # 功能开发工作流 (v5.6.0)
+│   ├── xy-feat/                   # 功能开发工作流 (v5.7.0)
 │   ├── uniapp-wechat-scaffold/    # UniApp 脚手架
 │   ├── audit-vue-biz-component/   # Vue3 B端业务组件审计
 │   ├── self-check-trinity/        # 三合一质量检查
 │   ├── unified-api-response/      # 统一 API 响应
 │   ├── api-name-drift-defense/    # API 漂移防御
-│   ├── docs-layout-quadrant/      # 文档五维布局 (v3.2.0)
-│   ├── lean-docs/                 # 文档瘦身与检索治理 (v1.3.0)
+│   ├── docs-layout-quadrant/      # 文档五维布局 (v3.4.0)
+│   ├── lean-docs/                 # 文档瘦身与检索治理 (v1.4.1)
+│   ├── doc-craftsman/             # 结构化文档契约与接口文档原子化 (v1.0.0)
 │   ├── health-probe-discipline/   # 探针规范
 │   ├── z-paging-best-practices/   # z-paging 分页最佳实践
 │   └── code-search-discipline/    # 代码搜索纪律

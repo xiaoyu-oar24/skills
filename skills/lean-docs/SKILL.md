@@ -1,7 +1,7 @@
 ---
 name: "lean-docs"
-description: "文档体系瘦身与检索治理技能：归档过期的 plan/tracking、精简活文档冗余流水账、多子特性交付完成后的特性群 SSOT 聚合（提炼唯一架构规范与操作指南并归档散碎 design/guide）、重构紧凑版 INDEX.md 索引，并在各 AI 工具的忽略配置中阻断检索噪音，极致降低 Token 消耗。TRIGGER when: 用户输入 /lean-docs、提及精简文档/文档瘦身/降低文档 Token 消耗/收敛已完成的计划与追踪堆积/多子特性交付完成需聚合文档为单一真理源。SKIP: 新建功能或进行中的需求开发（用 xy-feat，其阶段 0 会做 L0/L1/L2 档位判定）；仅做五维结构归类、命名校验、规则文件注入（用 docs-layout-quadrant）；多主题/多接口混杂的巨石文档拆解（用 doc-craftsman，本技能只做内容冗余精炼）。"
-version: "1.4.1"
+description: "文档体系瘦身与检索治理技能：归档过期的 plan/tracking、精简活文档冗余流水账、多子特性交付完成后的特性群 SSOT 聚合（提炼唯一架构规范与操作指南并归档散碎 design/guide）、重构紧凑版 INDEX.md 索引，并在各 AI 工具的忽略配置中阻断检索噪音，极致降低 Token 消耗。TRIGGER when: 用户输入 /lean-docs、提及精简文档/文档瘦身/降低文档 Token 消耗/收敛已完成的计划与追踪堆积/多子特性交付完成需聚合文档为单一真理源。SKIP: 新建功能或进行中的需求开发（按项目常规流程处理，仅显式 /xy-feat 才启动该工作流）；仅做五维结构归类、命名校验、规则文件注入（用 docs-layout-quadrant）；多主题/多接口混杂的巨石文档拆解（用 doc-craftsman，本技能只做内容冗余精炼）。"
+version: "1.4.2"
 author: "xiaoyu"
 ---
 
@@ -18,7 +18,7 @@ author: "xiaoyu"
   - 文档库经过多轮迭代后出现大量已完成的 plan/tracking 堆积或活文档过长
   - **特性群交付完成需聚合收敛**：同一业务领域（如 `umc*`、`pay*`、`order*`）下多个子特性（design/guide/plan/tracking）已全部交付验收，需要提炼单一真理源（SSOT）并归档散碎过程文档（详见 `aidocs/guide/lean-docs特性群治理标准.md`）
 - **SKIP**（与相邻技能硬性分流）:
-  - 正在进行中的业务功能开发任务（应使用 `xy-feat`，其阶段 0 会做档位判定：L0 轻量/L1 精简/L2 全量）
+  - 正在进行中的业务功能开发任务：按项目常规流程处理，不因本技能 SKIP 而自动激活 `xy-feat`；仅用户显式输入 `/xy-feat` 时进入该工作流（阶段 0 调用档位判定）。
   - 仅做五维结构归类、命名规范校验、规则文件注入（应使用 `docs-layout-quadrant`）
   - **多主题/多接口混杂的巨石文档拆解**（应使用 `doc-craftsman`：本技能只处理内容冗余精炼，不处理结构混杂拆解）
   - 对代码源码或配置文件的直接修改
